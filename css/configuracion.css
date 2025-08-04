@@ -1,0 +1,444 @@
+/* ========= CONFIGURACION.CSS – CESUN v2.4 ========= */
+
+/* Reset general */
+body {
+  background: none !important;
+}
+
+/* ---------- Tarjetas y separaciones ---------- */
+.cesun-card {
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+  background: rgba(255,255,255,0.97);
+  border: none;
+  margin-bottom: 2rem;
+}
+
+.cesun-card-header {
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(90deg, #0056b3, #003366);
+  color: #fff;
+  padding: 1.2rem 1.5rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ========= TABLAS MEJORADAS ========= */
+.cesun-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 0;
+}
+
+.cesun-table th, 
+.cesun-table td {
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+/* Cabecera con efecto de vidrio */
+.cesun-table thead th {
+  background: linear-gradient(135deg, rgba(0, 86, 179, 0.95), rgba(0, 51, 102, 0.95));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+  border: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Bordes redondeados en esquinas */
+.cesun-table thead th:first-child {
+  border-radius: 12px 0 0 0;
+}
+
+.cesun-table thead th:last-child {
+  border-radius: 0 12px 0 0;
+}
+
+.cesun-table tbody tr:last-child td:first-child {
+  border-radius: 0 0 0 12px;
+}
+
+.cesun-table tbody tr:last-child td:last-child {
+  border-radius: 0 0 12px 0;
+}
+
+/* Efecto hover mejorado */
+.cesun-table.table-hover tbody tr:hover td {
+  background-color: rgba(0, 86, 179, 0.08);
+  transform: translateX(2px);
+}
+
+/* Rayado con transparencia */
+.cesun-table.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: rgba(248, 249, 250, 0.7);
+}
+
+/* Borde exterior opcional */
+.cesun-table.table-bordered {
+  border: 1.5px solid #dee2e6;
+}
+
+/* ---------- Columna de Acciones Mejorada ---------- */
+.col-acciones {
+  width: 140px;
+  text-align: center;
+}
+
+.cesun-table .btn-action {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  margin: 0 2px;
+  transition: all 0.2s ease;
+  opacity: 0.85;
+}
+
+.cesun-table .btn-action:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ---------- Badges Mejorados ---------- */
+.cesun-table .badge {
+  padding: 0.5em 0.9em;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  min-width: 70px;
+  display: inline-block;
+  text-align: center;
+}
+
+.badge.bg-success {
+  background: linear-gradient(135deg, #28a745, #218838);
+}
+
+.badge.bg-warning {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: #333;
+}
+
+.badge.bg-danger {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.badge.bg-secondary {
+  background: linear-gradient(135deg, #6c757d, #5a6268);
+}
+
+.badge.bg-primary {
+  background: linear-gradient(135deg, #007bff, #0069d9);
+}
+
+/* ---------- Efectos de Foco ---------- */
+.cesun-table tbody tr:focus-within {
+  box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.3);
+  outline: none;
+}
+
+/* ---------- Responsive Mejorado ---------- */
+@media (max-width: 768px) {
+  .cesun-table {
+    font-size: 0.9rem;
+  }
+  
+  .cesun-table th, 
+  .cesun-table td {
+    padding: 0.7rem 0.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .cesun-table thead {
+    display: none;
+  }
+  
+  .cesun-table tr {
+    display: block;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    background: white;
+  }
+  
+  .cesun-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  
+  .cesun-table td:last-child {
+    border-bottom: none;
+  }
+  
+  .cesun-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--cesun-dark-blue);
+    margin-right: 1rem;
+    flex: 0 0 40%;
+  }
+  
+  .cesun-table .col-acciones {
+    width: 100%;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    background: rgba(0,0,0,0.02);
+  }
+  
+  .cesun-table .badge {
+    margin-left: auto;
+  }
+}
+
+/* ---------- Efectos de Scroll ---------- */
+.table-responsive {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.05);
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: rgba(0, 86, 179, 0.3);
+  border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 86, 179, 0.5);
+}
+
+/* ---------- Configuración de fondo ---------- */
+.fondo-preview {
+  width: 100%;
+  height: 200px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 3px solid #dee2e6;
+  position: relative;
+  overflow: hidden;
+}
+.fondo-preview::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.3);
+}
+.fondo-preview .fondo-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+.file-upload-area {
+  border: 2px dashed #dee2e6;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  background: rgba(248,249,250,0.8);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.file-upload-area:hover {
+  border-color: #0056b3;
+  background: rgba(248,249,250,0.95);
+}
+.file-upload-area.dragover {
+  border-color: #0056b3;
+  background: rgba(0,86,179,0.1);
+}
+.btn-upload {
+  background: linear-gradient(135deg, #0056b3, #003366);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.btn-upload:hover {
+  background: linear-gradient(135deg, #003366, #0056b3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* ---------- Variables y estilos generales ---------- */
+:root {
+  --cesun-blue: #0056b3;
+  --cesun-dark-blue: #003366;
+  --cesun-gold: #ffd700;
+  --cesun-light-gray: #f8f9fa;
+}
+
+.bg-fondo-cesun {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: -2;
+  background: url('../images/Fondo de pantalla 2024.png') center center/cover no-repeat;
+}
+
+.bg-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.cesun-header {
+  background: linear-gradient(135deg, rgba(0, 51, 102, 0.98), rgba(0, 86, 179, 0.95));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+  position: relative;
+  z-index: 1000;
+}
+
+.cesun-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0.1) 0%, 
+    rgba(255,255,255,0.05) 50%, 
+    rgba(255,255,255,0.1) 100%);
+  pointer-events: none;
+}
+
+.cesun-header .container {
+  position: relative;
+  z-index: 1;
+}
+
+.cesun-logo {
+  height: 50px;
+  width: auto;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.cesun-header h1 {
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  font-weight: 600;
+}
+
+.cesun-header .btn-light {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--cesun-dark-blue);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.cesun-header .btn-light:hover {
+  background: rgba(255,255,255,1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Estilos adicionales para la selección de usuarios */
+#tablaUsuarios tbody tr.selected {
+  background-color: rgba(0, 86, 179, 0.15) !important;
+  position: relative;
+}
+
+#tablaUsuarios tbody tr.selected::after {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cesun-blue);
+}
+
+/* Estilo para el botón de cambiar permisos */
+#btnCambiarPermisos {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: #333;
+  border: none;
+}
+
+#btnCambiarPermisos:hover {
+  background: linear-gradient(135deg, #e0a800, #ffc107);
+  color: #222;
+}
+
+/* Ajustes para los badges de permisos */
+.badge-permisos {
+  font-size: 0.8rem;
+  padding: 0.4em 0.8em;
+  min-width: 90px;
+}
+
+/* Estilos para el modal de permisos */
+#permisosModal .modal-header {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: #333;
+}
+
+#permisosModal .modal-footer .btn-warning {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: #333;
+  border: none;
+}
+
+#permisosModal .modal-footer .btn-warning:hover {
+  background: linear-gradient(135deg, #e0a800, #ffc107);
+  color: #222;
+}
+
+/* Ajustes para la tabla de casillas sin botón de edición */
+#tablaCasillas .col-acciones {
+  width: 110px;
+}

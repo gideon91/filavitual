@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Servicios - CESUN Universidad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="../css/configuracion.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+    <div class="bg-fondo-cesun"></div>
+    <div class="bg-overlay"></div>
+    
+    <!-- Contenedor de alertas -->
+    <div id="alertsContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1100"></div>
+    
+    <header class="cesun-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <img src="../images/logo.png" alt="CESUN Universidad" class="cesun-logo me-3">
+                    <h1 class="h4 mb-0">Configuración de Servicios</h1>
+                </div>
+                <div>
+                    <a href="admin.html" class="btn btn-sm btn-light me-2">
+                        <i class="fas fa-tachometer-alt me-1"></i> Panel
+                    </a>
+                    <a href="dashboard.html" class="btn btn-sm btn-light me-2" target="_blank" rel="noopener">
+                        <i class="fas fa-tv me-1"></i> Pantalla
+                    </a>
+                    <a href="historial.html" class="btn btn-sm btn-light me-2">
+                        <i class="fas fa-history me-1"></i> Historial
+                    </a>
+                    <a href="configuracion.html" class="btn btn-sm btn-light me-2">
+                        <i class="fas fa-cog me-1"></i> Configuración
+                    </a>
+                    <div class="dropdown d-inline-block">
+                        <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>
+                            <span data-user-info="nombre">Usuario</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><span class="dropdown-item-text">
+                                <i class="fas fa-envelope me-2"></i>
+                                <span data-user-info="correo">correo@cesun.edu.mx</span>
+                            </span></li>
+                            <li><span class="dropdown-item-text">
+                                <i class="fas fa-user-tag me-2"></i>
+                                <span data-user-info="permisos">Administrador</span>
+                            </span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="auth.logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-4">
+        <!-- Sección de Servicios -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="cesun-card">
+                    <div class="cesun-card-header d-flex justify-content-between align-items-center">
+                        <h2 class="h4 mb-0"><i class="fas fa-cogs me-2"></i>Gestión de Servicios</h2>
+                        <div class="d-flex gap-2">
+                            <button id="limpiarServiciosBtn" class="btn btn-warning btn-sm">
+                                <i class="fas fa-trash me-1"></i>Limpiar Servicios
+                            </button>
+                        <button id="agregarServicioBtn" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus me-1"></i>Agregar Servicio
+                        </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle table-bordered table-striped shadow-sm cesun-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th>Estado</th>
+                                        <th class="col-acciones">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaServicios">
+                                    <!-- Se llena dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Casillas -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="cesun-card">
+                    <div class="cesun-card-header d-flex justify-content-between align-items-center">
+                        <h2 class="h4 mb-0"><i class="fas fa-door-open me-2"></i>Gestión de Casillas</h2>
+                        <div class="d-flex gap-2">
+                            <button id="limpiarCasillasBtn" class="btn btn-warning btn-sm">
+                                <i class="fas fa-trash me-1"></i>Limpiar Casillas
+                            </button>
+                        <button id="agregarCasillaBtn" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus me-1"></i>Agregar Casilla
+                        </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle table-bordered table-striped shadow-sm cesun-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Servicios</th>
+                                        <th>Estado</th>
+                                        <th>Usuarios</th>
+                                        <th>Activa</th>
+                                        <th class="col-acciones">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaCasillas">
+                                    <!-- Se llena dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Usuarios -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="cesun-card">
+                    <div class="cesun-card-header d-flex justify-content-between align-items-center">
+                        <h2 class="h4 mb-0"><i class="fas fa-users me-2"></i>Gestión de Usuarios</h2>
+                        <div class="d-flex gap-2">
+                            <button id="agregarUsuarioBtn" class="btn btn-success btn-sm">
+                                <i class="fas fa-plus me-1"></i>Agregar Usuario
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle table-bordered table-striped shadow-sm cesun-table" id="tablaUsuarios">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>Permisos</th>
+                                        <th>Estado</th>
+                                        <th class="col-acciones">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Se llena dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Fondo -->
+        <div class="row">
+            <div class="col-12">
+                <div class="cesun-card">
+                    <div class="cesun-card-header">
+                        <h2 class="h4 mb-0"><i class="fas fa-image me-2"></i>Configuración de Fondo</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Fondo Actual</h5>
+                                <div class="fondo-preview" id="fondoPreview" style="background-image: url('../images/Fondo de pantalla 2024.png')">
+                                    <div class="fondo-info">
+                                        <strong>Fondo de pantalla 2024.png</strong><br>
+                                        <small>Resolución: 1920x1080 | Tamaño: ~2.5 MB</small>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button class="btn btn-outline-primary btn-sm" id="btnVerFondo">
+                                        <i class="fas fa-eye me-1"></i>Ver fondo completo
+                                    </button>
+                                    <button class="btn btn-outline-warning btn-sm ms-2" id="btnRestaurarFondo">
+                                        <i class="fas fa-undo me-1"></i>Restaurar fondo por defecto
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Cambiar Fondo</h5>
+                                <div class="file-upload-area" id="fileUploadArea">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                    <h6>Arrastra una imagen aquí o haz clic para seleccionar</h6>
+                                    <p class="text-muted mb-3">Formatos soportados: JPG, PNG, GIF<br>
+                                    Tamaño máximo: 10 MB | Resolución recomendada: 1920x1080</p>
+                                    <input type="file" id="fondoFile" accept="image/*" style="display: none;">
+                                    <button class="btn btn-upload" id="btnSeleccionarFondo">
+                                        <i class="fas fa-folder-open me-2"></i>Seleccionar Imagen
+                                    </button>
+                                </div>
+                                <div class="mt-3" id="uploadProgress" style="display: none;">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <small class="text-muted">Subiendo imagen...</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para Servicios -->
+    <div class="modal fade" id="servicioModal" tabindex="-1" aria-labelledby="servicioModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="servicioModalLabel">Agregar Servicio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="servicioForm">
+                        <input type="hidden" id="servicioId">
+                        <div class="mb-3">
+                            <label for="servicioNombre" class="form-label">Nombre del Servicio*</label>
+                            <input type="text" class="form-control" id="servicioNombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="servicioDescripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="servicioDescripcion" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3 form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="servicioActivo" checked>
+                            <label class="form-check-label" for="servicioActivo">Servicio Activo</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardarServicioBtn">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Casillas -->
+    <div class="modal fade" id="casillaModal" tabindex="-1" aria-labelledby="casillaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="casillaModalLabel">Agregar Casilla</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="casillaForm">
+                        <input type="hidden" id="casillaId">
+                        <div class="mb-3">
+                            <label for="casillaNombre" class="form-label">Nombre de la Casilla*</label>
+                            <input type="text" class="form-control" id="casillaNombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Servicios que atiende*</label>
+                            <div id="casillaServiciosCheckboxes" class="d-flex flex-wrap gap-3"></div>
+                            <small class="text-muted">Seleccione al menos un servicio</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardarCasillaBtn">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Asignar Usuario a Casilla -->
+    <div class="modal fade" id="usuariosCasillaModal" tabindex="-1" aria-labelledby="usuariosCasillaModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="usuariosCasillaModalLabel">Asignar Usuarios a Casilla</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <h6 id="casillaUsuariosTitulo">Seleccionar usuarios para la casilla</h6>
+                        <p class="text-muted">Marca los usuarios que quieres asignar a esta casilla. Puedes seleccionar múltiples usuarios.</p>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">Usuarios disponibles:</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="seleccionarTodosUsuarios()">
+                                <i class="fas fa-check-square me-1"></i>Seleccionar Todos
+                            </button>
+                        </div>
+                        <div id="usuariosCasilla" class="list-group">
+                            <!-- Se llena dinámicamente -->
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Nota:</strong> Los usuarios asignados podrán atender turnos en esta casilla desde el panel de administración.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardarUsuariosCasillaBtn">Guardar Asignaciones</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Usuarios -->
+    <div class="modal fade" id="usuarioModal" tabindex="-1" aria-labelledby="usuarioModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="usuarioModalLabel">Gestionar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="usuarioForm">
+                        <input type="hidden" id="usuarioId">
+                        
+                        <!-- Información básica -->
+                        <div class="row">
+                            <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="usuarioNombre" class="form-label">Nombre Completo*</label>
+                            <input type="text" class="form-control" id="usuarioNombre" required>
+                        </div>
+                            </div>
+                            <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="usuarioCorreo" class="form-label">Correo Electrónico*</label>
+                            <input type="email" class="form-control" id="usuarioCorreo" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Contraseña -->
+                        <div class="row">
+                            <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="usuarioContrasena" class="form-label">Contraseña*</label>
+                                    <div class="input-group">
+                            <input type="password" class="form-control" id="usuarioContrasena" required>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility()">
+                                            <i class="fas fa-eye" id="passwordIcon"></i>
+                                        </button>
+                                    </div>
+                            <small class="text-muted">Mínimo 8 caracteres</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="usuarioConfirmarContrasena" class="form-label">Confirmar Contraseña*</label>
+                                    <input type="password" class="form-control" id="usuarioConfirmarContrasena" required>
+                                    <small class="text-muted">Debe coincidir con la contraseña</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Configuración de usuario -->
+                        <div class="row">
+                            <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="usuarioRol" class="form-label">Tipo de Usuario*</label>
+                            <select class="form-select" id="usuarioRol" required>
+                                <option value="normal">Usuario Normal</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Estado del Usuario</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="usuarioActivo" checked>
+                                        <label class="form-check-label" for="usuarioActivo">
+                                            Usuario Activo (No bloqueado)
+                                        </label>
+                                    </div>
+                                    <small class="text-muted">Los usuarios bloqueados no pueden acceder al sistema</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Información adicional -->
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Nota:</strong> Los administradores tienen acceso completo al sistema, mientras que los usuarios normales solo pueden gestionar turnos.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardarUsuarioBtn">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Ver Fondo -->
+    <div class="modal fade" id="fondoModal" tabindex="-1" aria-labelledby="fondoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fondoModalLabel">Fondo Actual</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="../images/Fondo de pantalla 2024.png" alt="Fondo actual" class="img-fluid" style="max-height: 70vh;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirmar Acción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmModalBody">
+                    <!-- Contenido dinámico -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmModalBtn">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/fondo.js"></script>
+    <script src="../js/configuracion.js"></script>
+    <script>
+// Listener para eventos globales entre pestañas (refuerzo para configuración)
+window.addEventListener('storage', function(e) {
+    if (e.key === 'eventoGlobal') {
+        const evento = JSON.parse(e.newValue);
+        if (evento.tipo === 'dataChanged') {
+            if (typeof cargarServicios === 'function') cargarServicios();
+            if (typeof cargarCasillas === 'function') cargarCasillas();
+            if (typeof cargarUsuarios === 'function') cargarUsuarios();
+        }
+        if (evento.tipo === 'turnoLlamado') {
+            if (typeof eventSystem !== 'undefined') {
+                eventSystem.emit('turnoLlamado', evento.data);
+            }
+        }
+        if (evento.tipo === 'fondoCambiado') {
+            console.log('Evento de cambio de fondo recibido en configuración');
+            // El fondo se aplicará automáticamente a través de fondo.js
+            // Solo actualizar la vista previa si es necesario
+            setTimeout(() => {
+                const fondoData = localStorage.getItem('fondoSistema');
+                if (fondoData) {
+                    try {
+                        const fondo = JSON.parse(fondoData);
+                        const fondoPreview = document.getElementById('fondoPreview');
+                        if (fondoPreview) {
+                            fondoPreview.style.backgroundImage = `url(${fondo.imageData})`;
+                            const fondoInfo = fondoPreview.querySelector('.fondo-info');
+                            if (fondoInfo) {
+                                fondoInfo.innerHTML = `
+                                    <strong>${fondo.fileName}</strong><br>
+                                    <small>${(fondo.fileSize / 1024 / 1024).toFixed(2)} MB</small>
+                                `;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error al actualizar vista previa:', error);
+                    }
+                }
+            }, 200);
+        }
+    }
+});
+
+// Función temporal para verificar el estado del sistema
+function verificarEstadoSistema() {
+    console.log('=== VERIFICACIÓN COMPLETA DEL SISTEMA ===');
+    console.log('Auth system:', auth);
+    console.log('¿Está autenticado?', auth.isAuthenticated());
+    console.log('Usuario actual:', auth.getCurrentUser());
+    console.log('¿Es admin?', auth.isAdmin());
+    
+    const usuario = auth.getCurrentUser();
+    if (usuario) {
+        console.log('Correo del usuario:', usuario.correo);
+        console.log('¿Es usuario global?', usuario.correo === 'soportetecnico@cesun.edu.mx');
+    }
+    
+    console.log('Usuarios en BD:', db.getUsuarios());
+    console.log('Usuario global en BD:', db.getUsuarios().find(u => u.correo === 'soportetecnico@cesun.edu.mx'));
+}
+
+// Ejecutar verificación al cargar
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('=== CONFIGURACIÓN - DOM CONTENT LOADED ===');
+    console.log('Auth system disponible:', typeof auth !== 'undefined');
+    if (typeof auth !== 'undefined') {
+        console.log('Usuario en auth al cargar:', auth.getCurrentUser());
+        console.log('¿Está autenticado?', auth.isAuthenticated());
+    }
+    setTimeout(verificarEstadoSistema, 1000);
+});
+
+// Hacer función disponible globalmente
+window.verificarEstadoSistema = verificarEstadoSistema;
+
+// Globalizar funciones para htmx y storage
+window.cargarServicios = cargarServicios;
+window.cargarCasillas = cargarCasillas;
+window.cargarUsuarios = cargarUsuarios;
+window.abrirModalServicio = abrirModalServicio;
+window.editarServicio = editarServicio;
+window.eliminarServicio = eliminarServicio;
+window.editarCasilla = editarCasilla;
+window.eliminarCasilla = eliminarCasilla;
+window.activarCasilla = activarCasilla;
+window.desactivarCasilla = desactivarCasilla;
+window.abrirModalUsuariosCasilla = abrirModalUsuariosCasilla;
+window.seleccionarTodosUsuarios = seleccionarTodosUsuarios;
+window.guardarUsuariosCasilla = guardarUsuariosCasilla;
+window.verUsuariosCasilla = verUsuariosCasilla;
+window.verCasillasUsuario = verCasillasUsuario;
+window.abrirModalAgregarUsuario = abrirModalAgregarUsuario;
+window.editarUsuario = editarUsuario;
+window.guardarUsuario = guardarUsuario;
+window.togglePasswordVisibility = togglePasswordVisibility;
+window.restablecerContrasenaUsuario = restablecerContrasenaUsuario;
+window.toggleBloqueoUsuario = toggleBloqueoUsuario;
+window.eliminarUsuario = eliminarUsuario;
+
+// Función para actualizar la información del usuario en el dropdown
+function actualizarInfoUsuario() {
+    const usuario = auth.getCurrentUser();
+    if (usuario) {
+        const nombreElements = document.querySelectorAll('[data-user-info="nombre"]');
+        const correoElements = document.querySelectorAll('[data-user-info="correo"]');
+        const permisosElements = document.querySelectorAll('[data-user-info="permisos"]');
+        
+        nombreElements.forEach(el => el.textContent = usuario.nombre);
+        correoElements.forEach(el => el.textContent = usuario.correo);
+        permisosElements.forEach(el => el.textContent = usuario.permisos === 'admin' ? 'Administrador' : 'Usuario');
+    }
+}
+
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarInfoUsuario();
+});
+</script>
+</body>
+</html>

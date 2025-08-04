@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Turnos - CESUN Universidad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+    <div class="bg-fondo-cesun"></div>
+    <div class="bg-overlay"></div>
+    <header class="cesun-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <button onclick="verificarEstadoBD()" class="btn btn-sm btn-outline-light me-2" title="Debug">
+                        <i class="fas fa-bug"></i>
+                    </button>
+                    <button onclick="db.debugAsignacionesUsuarios()" class="btn btn-sm btn-outline-light me-2" title="Debug Asignaciones">
+                        <i class="fas fa-users"></i>
+                    </button>
+                    <button onclick="cargarCasillasUsuario()" class="btn btn-sm btn-outline-light me-2" title="Debug Cargar Casillas">
+                        <i class="fas fa-desktop"></i>
+                    </button>
+                    <button onclick="forzarRecargaCasillas()" class="btn btn-sm btn-outline-light me-2" title="Forzar Recarga Casillas">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <button onclick="db.verificarEstadoCasillas()" class="btn btn-sm btn-outline-info me-2" title="Verificar Estado Casillas">
+                        <i class="fas fa-check-circle"></i>
+                    </button>
+                    <button onclick="debugTurnoActual()" class="btn btn-sm btn-outline-warning me-2" title="Debug Turno Actual">
+                        <i class="fas fa-bug"></i>
+                    </button>
+                    <button onclick="debugHistorial()" class="btn btn-sm btn-outline-success me-2" title="Debug Historial">
+                        <i class="fas fa-history"></i>
+                    </button>
+                    <button onclick="probarHistorialUsuario()" class="btn btn-sm btn-outline-info me-2" title="Probar Historial Usuario">
+                        <i class="fas fa-user-check"></i>
+                    </button>
+                    <button onclick="debugTurnosActivos()" class="btn btn-sm btn-outline-warning me-2" title="Debug Turnos Activos">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <button onclick="debugFechasTurnos()" class="btn btn-sm btn-outline-secondary me-2" title="Debug Fechas">
+                        <i class="fas fa-calendar"></i>
+                    </button>
+                    <button onclick="debugHistorialCompleto()" class="btn btn-sm btn-outline-dark me-2" title="Debug Historial">
+                        <i class="fas fa-book"></i>
+                    </button>
+                    <button onclick="probarFlujoCompleto()" class="btn btn-sm btn-outline-success me-2" title="Probar Flujo">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button onclick="debugEstadoActual()" class="btn btn-sm btn-outline-info me-2" title="Debug Estado">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                    <button onclick="probarFlujoPasoAPaso()" class="btn btn-sm btn-outline-warning me-2" title="Prueba Paso a Paso">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                    <button onclick="debugEventListeners()" class="btn btn-sm btn-outline-primary me-2" title="Debug Event Listeners">
+                        <i class="fas fa-mouse-pointer"></i>
+                    </button>
+                    <button onclick="debugTurnosEnEspera()" class="btn btn-sm btn-outline-danger me-2" title="Debug Turnos en Espera">
+                        <i class="fas fa-clock"></i>
+                    </button>
+                    <button onclick="forzarCargaTurnosEnEspera()" class="btn btn-sm btn-outline-warning me-2" title="Forzar Carga">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                    <button onclick="debugTurnosDirecto()" class="btn btn-sm btn-outline-secondary me-2" title="Debug Directo">
+                        <i class="fas fa-database"></i>
+                    </button>
+                    <button onclick="verificarEstadoTurnos()" class="btn btn-sm btn-outline-info me-2" title="Verificar Turnos">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button onclick="forzarActualizacionDashboard()" class="btn btn-sm btn-outline-light me-2" title="Actualizar Dashboard">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button onclick="forzarActualizacionTurnosEnEspera()" class="btn btn-sm btn-outline-danger me-2" title="Forzar Actualización Turnos">
+                        <i class="fas fa-list-ul"></i>
+                    </button>
+                    <button onclick="verificarEstadoCompleto()" class="btn btn-sm btn-outline-dark me-2" title="Verificar Estado Completo">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button onclick="probarActualizacionTabla()" class="btn btn-sm btn-outline-primary me-2" title="Probar Actualización Tabla">
+                        <i class="fas fa-table"></i>
+                    </button>
+                    <button onclick="mostrarTodosLosTurnosEnEspera()" class="btn btn-sm btn-outline-success me-2" title="Mostrar Todos los Turnos">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <img src="../images/logo.png" alt="CESUN Universidad" class="cesun-logo me-3">
+                    <h1 class="h4 mb-0">Administración de Turnos</h1>
+                </div>
+                <div>
+                    <a href="admin.html" class="btn btn-sm btn-light me-2">
+                        <i class="fas fa-tachometer-alt me-1"></i> Panel
+                    </a>
+                    <a href="dashboard.html" class="btn btn-sm btn-light me-2" target="_blank" rel="noopener">
+                        <i class="fas fa-tv me-1"></i> Pantalla
+                    </a>
+                    <a href="historial.html" class="btn btn-sm btn-light me-2">
+                        <i class="fas fa-history me-1"></i> Historial
+                    </a>
+                    <a href="configuracion.html" class="btn btn-sm btn-light me-2" id="configuracionBtn" style="display:none;">
+                        <i class="fas fa-cog me-1"></i> Configuración
+                    </a>
+                    <div class="dropdown d-inline-block">
+                        <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>
+                            <span data-user-info="nombre">Usuario</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><span class="dropdown-item-text">
+                                <i class="fas fa-envelope me-2"></i>
+                                <span data-user-info="correo">correo@cesun.edu.mx</span>
+                            </span></li>
+                            <li><span class="dropdown-item-text">
+                                <i class="fas fa-user-tag me-2"></i>
+                                <span data-user-info="permisos">Administrador</span>
+                            </span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="auth.logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card control-turnos-card">
+                    <div class="card-header control-turnos-header">
+                        <h2 class="h4 mb-0"><i class="fas fa-user-cog me-2"></i>Control de Turnos</h2>
+                    </div>
+                    <div class="card-body control-turnos-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <label for="casillaAdmin" class="form-label fw-bold">Casilla de Atención</label>
+                                    <select class="form-select" id="casillaAdmin"></select>
+                                    <div id="casillaInfo" class="form-text mt-1" style="display:none;">
+                                        <i class="fas fa-info-circle text-info me-1"></i>
+                                        <span id="casillaInfoText">Casilla asignada automáticamente</span>
+                                    </div>
+                                </div>
+                                <div class="servicios-casilla-container mb-4">
+                                    <label class="form-label fw-bold">Servicios que puede atender esta casilla</label>
+                                    <div id="serviciosCasilla" class="d-flex flex-wrap gap-2"></div>
+                                </div>
+                                
+                                <!-- Botones de Configuración de Horarios -->
+                                <div class="configuracion-horarios mb-4">
+                                    <label class="form-label fw-bold">Configuración de Horarios</label>
+                                    <div class="d-grid gap-2">
+                                        <button id="configReunionBtn" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-calendar-plus me-1"></i>Horario de Reunión
+                                        </button>
+                                        <button id="configAtencionBtn" class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-clock me-1"></i>Horarios de Atención
+                                        </button>
+                                        <button id="verHorariosBtn" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-eye me-1"></i>Ver Horarios Actuales
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-3">
+                                    <button id="siguienteTurnoBtn" class="btn btn-control btn-siguiente">
+                                        <i class="fas fa-bullhorn me-2"></i>Llamar Siguiente Turno
+                                    </button>
+                                    <button id="cancelarTurnoBtn" class="btn btn-control btn-cancelar" style="display:none;">
+                                        <i class="fas fa-times-circle me-2"></i>Cancelar Turno
+                                    </button>
+                                    <button id="reasignarTurnoBtn" class="btn btn-control btn-warning" style="display:none;">
+                                        <i class="fas fa-exchange-alt me-2"></i>Reasignar
+                                    </button>
+                                    <button id="marcarAtendidoBtn" class="btn btn-control btn-success" style="display:none;">
+                                        <i class="fas fa-check-circle me-2"></i>Marcar como Atendido
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <div class="turno-actual-card h-100 d-flex align-items-center justify-content-center">
+                                    <div id="currentTurnInfo" class="text-center">
+                                        <div class="text-muted mb-2">Turno actual en esta casilla</div>
+                                        <div id="currentTurnNumber" class="turno-number mb-3">---</div>
+                                        <div id="currentTurnService" class="text-muted">Seleccione una casilla</div>
+                                        <div id="currentTurnEmail" class="text-muted"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="cesun-card">
+                    <div class="cesun-card-header d-flex justify-content-between align-items-center">
+                        <h2 class="h4 mb-0"><i class="fas fa-clock me-2"></i>Turnos en Espera</h2>
+                        <div>
+                            <span class="badge bg-primary rounded-pill" id="turnosPendientesCount">0</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Turno</th>
+                                        <th>Servicio</th>
+                                        <th>Estudiante</th>
+                                        <th>Hora</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaTurnos">
+                                    <!-- Se llena dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Configuración de Servicios -->
+        <div class="row" id="configuracionSection" style="display: none;">
+            <div class="col-12">
+                <div class="cesun-card">
+                    <div class="cesun-card-header d-flex justify-content-between align-items-center">
+                        <h2 class="h4 mb-0"><i class="fas fa-cogs me-2"></i>Configuración de Servicios</h2>
+                        <button id="agregarServicioBtn" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus me-1"></i>Agregar Servicio
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre del Servicio</th>
+                                        <th>Descripción</th>
+                                        <th>Estado</th>
+                                        <th>Casilla</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaServicios">
+                                    <!-- Se llena dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/fondo.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticación usando el nuevo sistema
+            if (!auth.isAuthenticated()) {
+                auth.redirectToLogin();
+                return;
+            }
+
+            // Cargar información del usuario y casillas
+            cargarInformacionUsuario();
+            cargarCasillasUsuario();
+            
+            // Configurar eventos de la casilla
+            const casillaSelect = document.getElementById('casillaAdmin');
+            if (casillaSelect) {
+                casillaSelect.addEventListener('change', function() {
+                    const casillaId = parseInt(this.value);
+                    if (casillaId) {
+                        const casilla = db.getCasilla(casillaId);
+                        if (casilla) {
+                            mostrarServiciosCasilla(casilla);
+                            actualizarTurnoActual();
+                            actualizarBotonesControl();
+                            cargarTurnosEnEspera();
+                        }
+                    } else {
+                        actualizarTurnoActual();
+                        actualizarBotonesControl();
+                        cargarTurnosEnEspera();
+                    }
+                });
+            }
+            
+            // Cargar datos iniciales
+            cargarServicios();
+            cargarTurnosEnEspera();
+            actualizarTurnoActual();
+            actualizarBotonesControl();
+            cargarEstadisticas();
+             
+            document.getElementById('siguienteTurnoBtn').addEventListener('click', llamarSiguienteTurno);
+            document.getElementById('marcarAtendidoBtn').addEventListener('click', function() {
+                console.log('=== BOTÓN MARCAR ATENDIDO CLICKEADO ===');
+                console.log('Event listener ejecutado correctamente');
+                mostrarModalObservacionesAtencion();
+            });
+            document.getElementById('cancelarTurnoBtn').addEventListener('click', function() {
+                console.log('=== BOTÓN CANCELAR TURNO CLICKEADO ===');
+                console.log('Event listener ejecutado correctamente');
+                mostrarModalMotivoCancelacion();
+            });
+            document.getElementById('reasignarTurnoBtn').addEventListener('click', function() {
+                mostrarModalReasignarServicio();
+            });
+            
+            // Event listeners para configuración de horarios
+            document.getElementById('configReunionBtn').addEventListener('click', function() {
+                mostrarModalHorarioReunion();
+            });
+            
+            document.getElementById('configAtencionBtn').addEventListener('click', function() {
+                mostrarModalHorariosAtencion();
+            });
+            
+            document.getElementById('verHorariosBtn').addEventListener('click', function() {
+                mostrarModalVerHorarios();
+            });
+            
+            document.getElementById('guardarHorarioReunionBtn').addEventListener('click', function() {
+                guardarHorarioReunion();
+            });
+            
+            document.getElementById('guardarHorariosAtencionBtn').addEventListener('click', function() {
+                guardarHorariosAtencion();
+            });
+            
+            // Actualizar cada 10 segundos
+            setInterval(function() {
+                cargarInformacionUsuario();
+                cargarCasillasUsuario();
+                cargarTurnosEnEspera();
+                actualizarTurnoActual();
+                actualizarBotonesControl();
+                cargarEstadisticas();
+                
+                // Verificar horarios expirados cada 10 segundos
+                db.verificarHorariosExpirados();
+            }, 10000);
+        });
+        
+
+
+        function mostrarServiciosCasilla() {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            const casilla = db.getCasilla(casillaId);
+            const cont = document.getElementById('serviciosCasilla');
+            if (!casilla || !cont) return;
+            const servicios = db.getServicios().filter(s => casilla.servicios.includes(s.id));
+            cont.innerHTML = servicios.length
+                ? servicios.map(s => `<span class='badge bg-primary'>${s.nombre}</span>`).join(' ')
+                : '<span class="text-muted">No tiene servicios asignados</span>';
+        }
+
+        function cargarServicios() {
+            // Esta función carga los servicios desde la configuración
+            // y actualiza cualquier interfaz que dependa de ellos
+            const servicios = db.getServicios();
+            console.log('Servicios cargados desde configuración:', servicios);
+            
+            // Actualizar servicios de la casilla si hay una seleccionada
+            mostrarServiciosCasilla();
+            
+            // Si hay una tabla de servicios en configuración, actualizarla
+            const tablaServicios = document.getElementById('tablaServicios');
+            if (tablaServicios) {
+                tablaServicios.innerHTML = servicios.map(servicio => `
+                    <tr>
+                        <td>${servicio.id}</td>
+                        <td>${servicio.nombre}</td>
+                        <td>${servicio.descripcion || '-'}</td>
+                        <td>
+                            <span class="badge ${servicio.activo ? 'bg-success' : 'bg-secondary'}">
+                                ${servicio.activo ? 'Activo' : 'Inactivo'}
+                            </span>
+                        </td>
+                        <td>
+                            ${db.getCasillas().filter(c => c.servicios.includes(servicio.id)).map(c => c.nombre).join(', ') || '-'}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="editarServicio(${servicio.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarServicio(${servicio.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function actualizarTurnoActual() {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            const casilla = db.getCasilla(casillaId);
+            const currentTurnNumber = document.getElementById('currentTurnNumber');
+            const currentTurnService = document.getElementById('currentTurnService');
+            const currentTurnEmail = document.getElementById('currentTurnEmail');
+            if (casilla && casilla.estado === 'ocupada') {
+                const turno = db.turnos.find(t => t.id === casilla.turnoActual);
+                if (turno) {
+                    currentTurnNumber.textContent = turno.numero;
+                    // Mostrar información del estudiante (nombre y email)
+                    currentTurnService.innerHTML = `
+                        <div class="student-info">
+                            <div class="student-name"><strong>${turno.nombre || 'Estudiante'}</strong></div>
+                            <div class="student-email text-muted">${turno.email}</div>
+                        </div>
+                    `;
+                    // Mostrar información del servicio
+                    if (currentTurnEmail) {
+                        currentTurnEmail.innerHTML = `
+                            <div class="service-info">
+                                <i class="fas fa-cog me-1"></i>
+                                <span>${turno.servicio}</span>
+                            </div>
+                        `;
+                    }
+                    return;
+                }
+            }
+            currentTurnNumber.textContent = '---';
+            currentTurnService.textContent = 'Casilla disponible';
+            if (currentTurnEmail) {
+                currentTurnEmail.textContent = '';
+            }
+        }
+
+        function llamarSiguienteTurno() {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            const turnoLlamado = db.llamarSiguienteTurno(casillaId);
+            if (turnoLlamado) {
+                const notification = document.createElement('div');
+                notification.className = 'position-fixed bottom-0 end-0 p-3';
+                notification.style.zIndex = '11';
+                const toast = document.createElement('div');
+                toast.className = 'toast show';
+                toast.role = 'alert';
+                toast.setAttribute('aria-live', 'assertive');
+                toast.setAttribute('aria-atomic', 'true');
+                toast.innerHTML = `
+                    <div class="toast-header bg-primary text-white">
+                        <strong class="me-auto">Nuevo turno llamado</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        <strong>${turnoLlamado.numero}</strong> - ${turnoLlamado.servicio}<br>
+                        Dirigirse a Casilla ${casillaId}
+                    </div>
+                `;
+                notification.appendChild(toast);
+                document.body.appendChild(notification);
+                setTimeout(() => { notification.remove(); }, 5000);
+                cargarTurnosEnEspera();
+                actualizarTurnoActual();
+                actualizarBotonesControl();
+            } else {
+                showAlert('No hay turnos en espera o la casilla está ocupada', 'warning');
+            }
+        }
+
+        function actualizarBotonesControl() {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            const casilla = db.getCasilla(casillaId);
+            const siguienteBtn = document.getElementById('siguienteTurnoBtn');
+            const cancelarBtn = document.getElementById('cancelarTurnoBtn');
+            const reasignarBtn = document.getElementById('reasignarTurnoBtn');
+            const marcarBtn = document.getElementById('marcarAtendidoBtn');
+
+            if (!casilla) {
+                siguienteBtn.style.display = 'none';
+                cancelarBtn.style.display = 'none';
+                reasignarBtn.style.display = 'none';
+                marcarBtn.style.display = 'none';
+                return;
+            }
+
+            if (casilla.estado === 'libre') {
+                siguienteBtn.style.display = 'block';
+                cancelarBtn.style.display = 'none';
+                reasignarBtn.style.display = 'none';
+                marcarBtn.style.display = 'none';
+            } else if (casilla.estado === 'ocupada') {
+                siguienteBtn.style.display = 'none';
+                cancelarBtn.style.display = 'block';
+                reasignarBtn.style.display = 'block';
+                marcarBtn.style.display = 'block';
+            }
+        }
+
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+            alert.style.zIndex = '11';
+            alert.role = 'alert';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.body.appendChild(alert);
+            setTimeout(() => { alert.remove(); }, 3000);
+        }
+
+        function cargarTurnosEnEspera() {
+            console.log('=== CARGAR TURNOS EN ESPERA ===');
+            
+            // Obtener turnos en espera sin filtrar por casilla específica
+            const turnosEnEspera = db.getTurnosEnEspera(null);
+            console.log('Turnos en espera obtenidos:', turnosEnEspera);
+            
+            const tabla = document.getElementById('tablaTurnos');
+            const countElement = document.getElementById('turnosPendientesCount');
+            
+            console.log('Elemento tabla encontrado:', !!tabla);
+            console.log('Elemento count encontrado:', !!countElement);
+            
+            if (countElement) {
+                countElement.textContent = turnosEnEspera.length;
+                console.log('Contador actualizado:', turnosEnEspera.length);
+            }
+            
+            if (tabla) {
+                if (turnosEnEspera.length === 0) {
+                    tabla.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-5"><div class="d-flex flex-column align-items-center"><i class="fas fa-check-circle text-success mb-2" style="font-size: 2rem;"></i><span>No hay turnos en espera</span></div></td></tr>`;
+                    console.log('Tabla actualizada: No hay turnos en espera');
+                } else {
+                    const htmlTurnos = turnosEnEspera.map((turno, index) => `
+                        <tr class="fade-in" style="animation-delay: ${index * 0.05}s">
+                            <td><strong>${turno.numero}</strong>${index === 0 ? '<span class="badge bg-warning text-dark ms-2">Siguiente</span>' : ''}</td>
+                            <td>${turno.servicio}</td>
+                            <td><small class="text-muted">${turno.email}</small></td>
+                            <td><small>${formatTime(turno.fechaCreacion)}</small></td>
+                        </tr>
+                    `).join('');
+                    
+                    tabla.innerHTML = htmlTurnos;
+                    console.log('Tabla actualizada con', turnosEnEspera.length, 'turnos');
+                    console.log('HTML generado:', htmlTurnos);
+                }
+            } else {
+                console.error('No se encontró el elemento tablaTurnos');
+            }
+            
+            console.log('=== FIN CARGAR TURNOS EN ESPERA ===');
+        }
+
+        function formatTime(isoString) {
+            if (!isoString) {
+                return '--:--';
+            }
+            
+            const date = new Date(isoString);
+            
+            // Verificar si la fecha es válida
+            if (isNaN(date.getTime())) {
+                console.warn('Fecha inválida:', isoString);
+                return '--:--';
+            }
+            
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function cancelarTurnoAdmin(turnoId) {
+            const turno = db.turnos.find(t => t.id === turnoId);
+            if (!turno) {
+                showAlert('Turno no encontrado', 'danger');
+                return;
+            }
+            
+            let modalHtml = `
+                <div class="modal fade" id="cancelarTurnoAdminModal" tabindex="-1" aria-labelledby="cancelarTurnoAdminModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="cancelarTurnoAdminModalLabel">Cancelar Turno ${turno.numero}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>¿Está seguro de cancelar el turno <strong>${turno.numero}</strong> (${turno.servicio})?</p>
+                        <label for="motivoCancelacionAdmin" class="form-label">Motivo de la cancelación:</label>
+                        <textarea id="motivoCancelacionAdmin" class="form-control" placeholder="Describe el motivo de la cancelación" rows="3" required></textarea>
+                        <div id="motivoCancelacionAdminError" class="text-danger mt-2"></div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" id="confirmarCancelacionAdminBtn">Confirmar Cancelación</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+            let modalDiv = document.createElement('div');
+            modalDiv.innerHTML = modalHtml;
+            document.body.appendChild(modalDiv);
+            let modal = new bootstrap.Modal(modalDiv.querySelector('#cancelarTurnoAdminModal'));
+            modal.show();
+            
+            document.getElementById('confirmarCancelacionAdminBtn').onclick = function() {
+                const motivo = document.getElementById('motivoCancelacionAdmin').value.trim();
+                if (!motivo) {
+                    document.getElementById('motivoCancelacionAdminError').textContent = 'Por favor, ingresa el motivo de la cancelación.';
+                    return;
+                }
+                
+                const usuario = auth.getCurrentUser();
+                const resultado = db.cancelarTurno(turnoId, motivo, usuario ? usuario.id : null);
+                if (resultado) {
+                    showAlert('Turno cancelado correctamente', 'success');
+                    cargarTurnosEnEspera();
+                } else {
+                    showAlert('Error al cancelar el turno', 'danger');
+                }
+                
+                modal.hide();
+                setTimeout(() => modalDiv.remove(), 500);
+            };
+            
+            modalDiv.querySelector('.btn-close').onclick = () => {
+                modal.hide();
+                setTimeout(() => modalDiv.remove(), 500);
+            };
+        }
+        
+        window.transferirTurno = function(turnoId) {
+            const turno = db.turnos.find(t => t.id === turnoId);
+            if (!turno) return;
+            
+            const modalContent = `
+                <div class="modal-header">
+                    <h5 class="modal-title">Transferir Turno ${turno.numero}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Transferir <strong>${turno.numero}</strong> (${turno.servicio}) a:</p>
+                    <select class="form-select mb-3" id="transferCasilla">
+                        <option value="1">Casilla 1 - Constancias</option>
+                        <option value="2">Casilla 2 - Reinscripciones</option>
+                        <option value="3">Casilla 3 - Pagos</option>
+                        <option value="4">Casilla 4 - Asesorías</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmarTransferencia(${turnoId})">Transferir</button>
+                </div>
+            `;
+            
+            showModal('Transferir Turno', modalContent);
+        };
+        
+        window.confirmarTransferencia = function(turnoId) {
+            const casillaId = parseInt(document.getElementById('transferCasilla').value);
+            const turno = db.turnos.find(t => t.id === turnoId);
+            
+            if (turno) {
+                // En una implementación real, actualizaríamos la base de datos
+                showAlert(`Turno ${turno.numero} transferido a Casilla ${casillaId}`, 'success');
+                bootstrap.Modal.getInstance(document.getElementById('actionModal')).hide();
+            }
+        };
+        
+        function showModal(title, content) {
+            let modal = document.getElementById('actionModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.className = 'modal fade';
+                modal.id = 'actionModal';
+                modal.tabIndex = '-1';
+                modal.innerHTML = `
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Content will be inserted here -->
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+            
+            const modalContent = modal.querySelector('.modal-content');
+            modalContent.innerHTML = content;
+            
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+        }
+
+        function abrirModalCodigoConfig() {
+            let modalHtml = `
+                <div class="modal fade" id="codigoConfigModal" tabindex="-1" aria-labelledby="codigoConfigModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="codigoConfigModalLabel">Código de acceso a configuración</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <input type="password" id="inputCodigoConfig" class="form-control" placeholder="Ingresa el código de acceso">
+                        <div id="codigoConfigError" class="text-danger mt-2"></div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" id="confirmarCodigoConfigBtn">Acceder</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+            let modalDiv = document.createElement('div');
+            modalDiv.innerHTML = modalHtml;
+            document.body.appendChild(modalDiv);
+            let modal = new bootstrap.Modal(modalDiv.querySelector('#codigoConfigModal'));
+            modal.show();
+            document.getElementById('confirmarCodigoConfigBtn').onclick = function() {
+                const codigo = document.getElementById('inputCodigoConfig').value;
+                if (codigo === 'Cesun2025*') {
+                    // Otorgar permisos admin permanente
+                    let admin = JSON.parse(localStorage.getItem('admin'));
+                    if (admin) {
+                        db.setPermisosUsuario(admin.id, 'admin');
+                        admin.permisos = 'admin';
+                        localStorage.setItem('admin', JSON.stringify(admin));
+                        showAlert('Permiso de configuración otorgado. Recarga la página para ver el botón.', 'success');
+                    }
+                    modal.hide();
+                    setTimeout(() => modalDiv.remove(), 500);
+                } else {
+                    document.getElementById('codigoConfigError').textContent = 'Código incorrecto';
+                }
+            };
+            modalDiv.querySelector('.btn-close').onclick = () => {
+                modal.hide();
+                setTimeout(() => modalDiv.remove(), 500);
+            };
+        }
+
+        function mostrarModalMotivoCancelacion() {
+            console.log('=== MOSTRAR MODAL MOTIVO CANCELACIÓN ===');
+            console.log('Función ejecutada correctamente');
+            
+            let modalHtml = `
+                <div class="modal fade" id="motivoCancelacionModal" tabindex="-1" aria-labelledby="motivoCancelacionModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="motivoCancelacionModalLabel">Motivo de la cancelación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <textarea id="motivoCancelacionInput" class="form-control" placeholder="Describe el motivo de la cancelación" rows="3"></textarea>
+                        <div id="motivoCancelacionError" class="text-danger mt-2"></div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" id="confirmarMotivoCancelacionBtn">Confirmar Cancelación</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+            let modalDiv = document.createElement('div');
+            modalDiv.innerHTML = modalHtml;
+            document.body.appendChild(modalDiv);
+            let modal = new bootstrap.Modal(modalDiv.querySelector('#motivoCancelacionModal'));
+            modal.show();
+            document.getElementById('confirmarMotivoCancelacionBtn').onclick = function() {
+                const motivo = document.getElementById('motivoCancelacionInput').value.trim();
+                if (!motivo) {
+                    document.getElementById('motivoCancelacionError').textContent = 'Por favor, ingresa el motivo de la cancelación.';
+                    return;
+                }
+                cancelarTurnoConMotivo(motivo);
+                modal.hide();
+                setTimeout(() => modalDiv.remove(), 500);
+            };
+            modalDiv.querySelector('.btn-close').onclick = () => {
+                const motivo = document.getElementById('motivoCancelacionInput').value.trim();
+                if (motivo && !confirm('¿Está seguro de cancelar? Se perderán los datos ingresados.')) {
+                    return;
+                }
+                modal.hide();
+                setTimeout(() => modalDiv.remove(), 500);
+            };
+        }
+
+        function cancelarTurnoConMotivo(motivo) {
+            console.log('=== CANCELAR TURNO ===');
+            console.log('Motivo recibido:', motivo);
+            
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            const casilla = db.getCasilla(casillaId);
+            const usuario = auth.getCurrentUser();
+            
+            console.log('Casilla ID:', casillaId);
+            console.log('Usuario:', usuario);
+            console.log('Casilla encontrada:', casilla);
+            
+            if (!casilla || !casilla.turnoActual) {
+                console.log('No hay turno para cancelar en esta casilla');
+                showAlert('No hay turno para cancelar en esta casilla', 'warning');
+                return;
+            }
+            
+            const turno = db.turnos.find(t => t.id === casilla.turnoActual);
+            console.log('Turno encontrado:', turno);
+            
+            if (!turno) {
+                console.log('No se encontró el turno');
+                showAlert('No se encontró el turno actual', 'danger');
+                return;
+            }
+            
+            const resultado = db.cancelarTurno(casilla.turnoActual, motivo, usuario ? usuario.id : null);
+            console.log('Resultado de cancelarTurno:', resultado);
+            
+            if (resultado) {
+                console.log('Turno cancelado exitosamente');
+                showAlert('Turno cancelado correctamente', 'success');
+                actualizarTurnoActual();
+                actualizarBotonesControl();
+                cargarTurnosEnEspera();
+            } else {
+                console.log('Error al cancelar turno');
+                showAlert('Error al cancelar el turno', 'danger');
+            }
+            
+            console.log('=== FIN CANCELAR TURNO ===');
+        }
+
+        function mostrarModalReasignarServicio() {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            const casilla = db.getCasilla(casillaId);
+            if (!casilla || !casilla.turnoActual) {
+                showAlert('No hay turno para reasignar en esta casilla', 'warning');
+                return;
+            }
+            const turno = db.turnos.find(t => t.id === casilla.turnoActual);
+            if (!turno) {
+                showAlert('No se encontró el turno actual', 'danger');
+                return;
+            }
+            // Obtener lista de servicios activos
+            const serviciosActivos = db.getServicios().filter(s => s.activo);
+            let opcionesServicios = '<option value="">-- Selecciona un servicio --</option>' + 
+                serviciosActivos.map(s => `<option value="${s.id}">${s.nombre}</option>`).join('');
+            let modalHtml = `
+                <div class="modal fade" id="reasignarServicioModal" tabindex="-1" aria-labelledby="reasignarServicioModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="reasignarServicioModalLabel">Reasignar Servicio</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p>Selecciona el nuevo servicio para el turno <strong>${turno.numero}</strong> (actual: ${turno.servicio}):</p>
+                        <select class="form-select mb-3" id="nuevoServicioSelect">
+                            ${opcionesServicios}
+                        </select>
+                        <div id="reasignarServicioError" class="text-danger mt-2"></div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="confirmarReasignarServicioBtn">Reasignar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+            let modalDiv = document.createElement('div');
+            modalDiv.innerHTML = modalHtml;
+            document.body.appendChild(modalDiv);
+            let modal = new bootstrap.Modal(modalDiv.querySelector('#reasignarServicioModal'));
+            modal.show();
+            document.getElementById('confirmarReasignarServicioBtn').onclick = function() {
+                const nuevoServicioId = parseInt(document.getElementById('nuevoServicioSelect').value);
+                if (!nuevoServicioId) {
+                    document.getElementById('reasignarServicioError').textContent = 'Selecciona un servicio válido.';
+                    return;
+                }
+                reasignarTurnoActual(nuevoServicioId);
+                modal.hide();
+                setTimeout(() => modalDiv.remove(), 500);
+            };
+            modalDiv.querySelector('.btn-close').onclick = () => {
+                modal.hide();
+                setTimeout(() => modalDiv.remove(), 500);
+            };
+        }
+
+        function reasignarTurnoActual(nuevoServicioId) {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            const casilla = db.getCasilla(casillaId);
+            if (!casilla || !casilla.turnoActual) {
+                showAlert('No hay turno para reasignar en esta casilla', 'warning');
+                return;
+            }
+            const turno = db.turnos.find(t => t.id === casilla.turnoActual);
+            if (!turno) {
+                showAlert('No se encontró el turno actual', 'danger');
+                return;
+            }
+            // Cambiar el servicio del turno
+            const servicio = db.getServicios().find(s => s.id === nuevoServicioId);
+            if (servicio) {
+                turno.servicio = servicio.nombre;
+                turno.servicioId = servicio.id;
+            }
+            // Desligar turno de la casilla y usuario, y ponerlo en espera
+            turno.estado = 'en_espera';
+            turno.casilla = null;
+            // Liberar la casilla
+            casilla.estado = 'libre';
+            casilla.turnoActual = null;
+            // Mover el turno al principio de la lista de espera
+            const idx = db.turnos.findIndex(t => t.id === turno.id);
+            if (idx !== -1) {
+                db.turnos.splice(idx, 1); // Eliminar de la posición actual
+                db.turnos.unshift(turno); // Insertar al principio
+            }
+            db.guardarDatos && db.guardarDatos();
+            showAlert('Turno reasignado y puesto al principio de la fila de espera', 'success');
+            actualizarTurnoActual();
+            actualizarBotonesControl();
+            cargarTurnosEnEspera();
+        }
+
+        function mostrarModalObservacionesAtencion() {
+            console.log('=== MOSTRAR MODAL OBSERVACIONES ATENCIÓN ===');
+            console.log('Función ejecutada correctamente');
+            let modalHtml = `
+                <div class="modal fade" id="observacionesAtencionModal" tabindex="-1" aria-labelledby="observacionesAtencionModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="observacionesAtencionModalLabel">Observaciones de atención</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <textarea id="observacionesAtencionInput" class="form-control" placeholder="Describe lo que se atendió o realizó" rows="3"></textarea>
+                        <div id="observacionesAtencionError" class="text-danger mt-2"></div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" id="confirmarObservacionesAtencionBtn">Confirmar</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>`;
+            let modalDiv = document.createElement('div');
+            modalDiv.innerHTML = modalHtml;
+            document.body.appendChild(modalDiv);
+            let modal = new bootstrap.Modal(modalDiv.querySelector('#observacionesAtencionModal'));
+            modal.show();
+            document.getElementById('confirmarObservacionesAtencionBtn').onclick = function() {
+                const observaciones = document.getElementById('observacionesAtencionInput').value.trim();
+                if (!observaciones) {
+                    document.getElementById('observacionesAtencionError').textContent = 'Por favor, ingresa las observaciones de atención.';
+                    return;
+                }
+                marcarTurnoAtendidoConObservaciones(observaciones);
+                modal.hide();
+                setTimeout(() => modalDiv.remove(), 500);
+            };
+            modalDiv.querySelector('.btn-close').onclick = () => {
+                const observaciones = document.getElementById('observacionesAtencionInput').value.trim();
+                if (observaciones && !confirm('¿Está seguro de cancelar? Se perderán los datos ingresados.')) {
+                    return;
+                }
+                modal.hide();
+                setTimeout(() => modalDiv.remove(), 500);
+            };
+        }
+
+        function marcarTurnoAtendidoConObservaciones(observaciones) {
+            console.log('=== MARCAR TURNO ATENDIDO ===');
+            console.log('Observaciones recibidas:', observaciones);
+            
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            const usuario = auth.getCurrentUser();
+            
+            console.log('Casilla ID:', casillaId);
+            console.log('Usuario:', usuario);
+            
+            // Verificar que hay un turno en atención en esta casilla
+            const casilla = db.getCasilla(casillaId);
+            console.log('Casilla encontrada:', casilla);
+            
+            if (!casilla || casilla.estado !== 'ocupada') {
+                console.log('No hay casilla ocupada');
+                showAlert('No hay turno para marcar como atendido en esta casilla', 'warning');
+                return;
+            }
+            
+            const turno = db.turnos.find(t => t.id === casilla.turnoActual);
+            console.log('Turno encontrado:', turno);
+            
+            if (!turno || turno.estado !== 'en_atencion') {
+                console.log('No hay turno en atención');
+                showAlert('No hay turno en atención en esta casilla', 'warning');
+                return;
+            }
+            
+            const resultado = db.marcarTurnoAtendido(casillaId, observaciones, usuario ? usuario.id : null);
+            console.log('Resultado de marcarTurnoAtendido:', resultado);
+            
+            if (resultado) {
+                console.log('Turno marcado como atendido exitosamente');
+                showAlert('Turno marcado como atendido correctamente', 'success');
+                actualizarTurnoActual();
+                actualizarBotonesControl();
+                cargarTurnosEnEspera();
+            } else {
+                console.log('Error al marcar turno como atendido');
+                showAlert('Error al marcar el turno como atendido', 'danger');
+            }
+            
+            console.log('=== FIN MARCAR TURNO ATENDIDO ===');
+        }
+
+        // Función para probar que el historial se guarda correctamente por usuario
+        function probarHistorialUsuario() {
+            console.log('=== PRUEBA HISTORIAL USUARIO ===');
+            const usuario = auth.getCurrentUser();
+            console.log('Usuario actual:', usuario);
+            
+            if (!usuario) {
+                console.log('No hay usuario autenticado');
+                return;
+            }
+            
+            // Obtener historial del usuario
+            const historialUsuario = db.getHistorialPorUsuario(usuario.id);
+            console.log('Historial del usuario:', historialUsuario);
+            
+            // Obtener estadísticas del historial
+            const estadisticas = db.getEstadisticasHistorial();
+            console.log('Estadísticas del historial:', estadisticas);
+            
+            // Mostrar resumen
+            const accionesUsuario = historialUsuario.map(h => h.accion);
+            const resumen = {
+                totalEntradas: historialUsuario.length,
+                acciones: accionesUsuario.reduce((acc, accion) => {
+                    acc[accion] = (acc[accion] || 0) + 1;
+                    return acc;
+                }, {}),
+                ultimasEntradas: historialUsuario.slice(0, 5)
+            };
+            
+            console.log('Resumen del historial del usuario:', resumen);
+            
+            // Mostrar alerta con el resumen
+            const mensaje = `
+                Usuario: ${usuario.nombre}
+                Total entradas: ${resumen.totalEntradas}
+                Acciones: ${Object.entries(resumen.acciones).map(([accion, count]) => `${accion}: ${count}`).join(', ')}
+            `;
+            
+            showAlert(mensaje, 'info');
+        }
+
+        // Función para debug de turnos activos
+        function debugTurnosActivos() {
+            console.log('=== DEBUG TURNOS ACTIVOS ===');
+            const todosLosTurnos = db.turnos;
+            console.log('Todos los turnos:', todosLosTurnos);
+            
+            const turnosActivos = todosLosTurnos.filter(t => 
+                t.estado === 'en_espera' || t.estado === 'en_atencion'
+            );
+            console.log('Turnos activos (en_espera o en_atencion):', turnosActivos);
+            
+            const turnosAtendidos = todosLosTurnos.filter(t => t.estado === 'atendido');
+            console.log('Turnos atendidos:', turnosAtendidos);
+            
+            const turnosCancelados = todosLosTurnos.filter(t => t.estado === 'cancelado');
+            console.log('Turnos cancelados:', turnosCancelados);
+            
+            // Verificar turnos por email
+            const emailsUnicos = [...new Set(todosLosTurnos.map(t => t.email))];
+            console.log('Emails únicos:', emailsUnicos);
+            
+            emailsUnicos.forEach(email => {
+                const turnosEmail = todosLosTurnos.filter(t => t.email === email);
+                const turnosActivosEmail = turnosEmail.filter(t => 
+                    t.estado === 'en_espera' || t.estado === 'en_atencion'
+                );
+                console.log(`Email ${email}:`, {
+                    total: turnosEmail.length,
+                    activos: turnosActivosEmail.length,
+                    atendidos: turnosEmail.filter(t => t.estado === 'atendido').length,
+                    cancelados: turnosEmail.filter(t => t.estado === 'cancelado').length,
+                    turnos: turnosEmail.map(t => ({numero: t.numero, estado: t.estado, fecha: t.fechaCreacion}))
+                });
+            });
+            
+            console.log('=== FIN DEBUG TURNOS ACTIVOS ===');
+        }
+
+        // Función para debug del historial completo
+        function debugHistorialCompleto() {
+            console.log('=== DEBUG HISTORIAL COMPLETO ===');
+            
+            // Obtener historial completo
+            const historialCompleto = db.getHistorial();
+            console.log('Historial completo:', historialCompleto);
+            
+            // Obtener turnos atendidos y cancelados
+            const turnosAtendidos = db.turnos.filter(t => t.estado === 'atendido');
+            const turnosCancelados = db.turnos.filter(t => t.estado === 'cancelado');
+            
+            console.log('Turnos atendidos:', turnosAtendidos);
+            console.log('Turnos cancelados:', turnosCancelados);
+            
+            // Verificar que cada turno atendido/cancelado tenga su entrada en el historial
+            const turnosConHistorial = [...turnosAtendidos, ...turnosCancelados];
+            turnosConHistorial.forEach(turno => {
+                const entradaHistorial = historialCompleto.find(h => 
+                    h.detalles.includes(turno.numero) && 
+                    (h.accion === 'TURNO_ATENDIDO' || h.accion === 'TURNO_CANCELADO')
+                );
+                
+                console.log(`Turno ${turno.numero}:`, {
+                    estado: turno.estado,
+                    tieneEntradaHistorial: !!entradaHistorial,
+                    entradaHistorial: entradaHistorial,
+                    observaciones: turno.descripcion || turno.motivoCancelacion,
+                    usuario: turno.usuarioAtendio || turno.usuarioCancelo
+                });
+            });
+            
+            console.log('=== FIN DEBUG HISTORIAL COMPLETO ===');
+        }
+
+        // Función para probar el flujo completo de atención/cancelación
+        function probarFlujoCompleto() {
+            console.log('=== PRUEBA FLUJO COMPLETO ===');
+            
+            const usuario = auth.getCurrentUser();
+            console.log('Usuario actual:', usuario);
+            
+            if (!usuario) {
+                console.log('No hay usuario autenticado');
+                return;
+            }
+            
+            // Crear un turno de prueba
+            try {
+                const turnoPrueba = db.generarTurno('Estudiante Prueba', 'prueba@test.com', 'Constancias');
+                console.log('Turno de prueba creado:', turnoPrueba);
+                
+                // Llamar el turno
+                const turnoLlamado = db.llamarSiguienteTurno(1); // Casilla 1
+                console.log('Turno llamado:', turnoLlamado);
+                
+                if (turnoLlamado) {
+                    // Marcar como atendido con observaciones
+                    const resultadoAtencion = db.marcarTurnoAtendido(1, 'Prueba de atención con observaciones', usuario.id);
+                    console.log('Resultado atención:', resultadoAtencion);
+                    
+                    // Verificar que se guardó en el historial
+                    const historial = db.getHistorial();
+                    const entradaAtencion = historial.find(h => h.detalles.includes(turnoPrueba.numero) && h.accion === 'TURNO_ATENDIDO');
+                    console.log('Entrada en historial:', entradaAtencion);
+                    
+                    showAlert('Prueba completada. Revisa la consola para ver los detalles.', 'success');
+                }
+            } catch (error) {
+                console.error('Error en la prueba:', error);
+                showAlert('Error en la prueba: ' + error.message, 'danger');
+            }
+            
+            console.log('=== FIN PRUEBA FLUJO COMPLETO ===');
+        }
+
+        // Función para debug del estado actual del turno y casilla
+        function debugEstadoActual() {
+            console.log('=== DEBUG ESTADO ACTUAL ===');
+            
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            console.log('Casilla seleccionada:', casillaId);
+            
+            if (!casillaId) {
+                console.log('No hay casilla seleccionada');
+                return;
+            }
+            
+            const casilla = db.getCasilla(casillaId);
+            console.log('Casilla encontrada:', casilla);
+            
+            if (casilla) {
+                console.log('Estado de la casilla:', casilla.estado);
+                console.log('Turno actual en casilla:', casilla.turnoActual);
+                
+                if (casilla.turnoActual) {
+                    const turno = db.turnos.find(t => t.id === casilla.turnoActual);
+                    console.log('Turno actual:', turno);
+                    
+                    if (turno) {
+                        console.log('Estado del turno:', turno.estado);
+                        console.log('Casilla del turno:', turno.casilla);
+                        console.log('Datos del turno:', {
+                            id: turno.id,
+                            numero: turno.numero,
+                            nombre: turno.nombre,
+                            email: turno.email,
+                            servicio: turno.servicio,
+                            estado: turno.estado,
+                            casilla: turno.casilla,
+                            fechaCreacion: turno.fechaCreacion,
+                            fechaAtencion: turno.fechaAtencion,
+                            descripcion: turno.descripcion,
+                            motivoCancelacion: turno.motivoCancelacion
+                        });
+                    }
+                }
+            }
+            
+            // Mostrar todos los turnos en atención
+            const turnosEnAtencion = db.turnos.filter(t => t.estado === 'en_atencion');
+            console.log('Turnos en atención:', turnosEnAtencion);
+            
+            // Mostrar todos los turnos en espera
+            const turnosEnEspera = db.turnos.filter(t => t.estado === 'en_espera');
+            console.log('Turnos en espera:', turnosEnEspera);
+            
+            console.log('=== FIN DEBUG ESTADO ACTUAL ===');
+        }
+
+        // Función para probar el flujo paso a paso
+        function probarFlujoPasoAPaso() {
+            console.log('=== PRUEBA FLUJO PASO A PASO ===');
+            
+            const usuario = auth.getCurrentUser();
+            console.log('Usuario actual:', usuario);
+            
+            if (!usuario) {
+                console.log('No hay usuario autenticado');
+                return;
+            }
+            
+            // Paso 1: Verificar estado inicial
+            console.log('--- PASO 1: Estado inicial ---');
+            debugEstadoActual();
+            
+            // Paso 2: Crear turno de prueba
+            console.log('--- PASO 2: Crear turno de prueba ---');
+            try {
+                const turnoPrueba = db.generarTurno('Estudiante Prueba', 'prueba@test.com', 'Constancias');
+                console.log('Turno creado:', turnoPrueba);
+                
+                // Paso 3: Llamar el turno
+                console.log('--- PASO 3: Llamar turno ---');
+                const turnoLlamado = db.llamarSiguienteTurno(1); // Casilla 1
+                console.log('Turno llamado:', turnoLlamado);
+                
+                if (turnoLlamado) {
+                    // Paso 4: Verificar estado después de llamar
+                    console.log('--- PASO 4: Estado después de llamar ---');
+                    debugEstadoActual();
+                    
+                    // Paso 5: Marcar como atendido
+                    console.log('--- PASO 5: Marcar como atendido ---');
+                    const observaciones = 'Prueba de observaciones paso a paso';
+                    const resultadoAtencion = db.marcarTurnoAtendido(1, observaciones, usuario.id);
+                    console.log('Resultado atención:', resultadoAtencion);
+                    
+                    // Paso 6: Verificar estado final
+                    console.log('--- PASO 6: Estado final ---');
+                    debugEstadoActual();
+                    
+                    // Paso 7: Verificar historial
+                    console.log('--- PASO 7: Verificar historial ---');
+                    const historial = db.getHistorial();
+                    const entradaAtencion = historial.find(h => 
+                        h.detalles.includes(turnoPrueba.numero) && h.accion === 'TURNO_ATENDIDO'
+                    );
+                    console.log('Entrada en historial:', entradaAtencion);
+                    
+                    // Paso 8: Verificar turno en la base de datos
+                    console.log('--- PASO 8: Verificar turno en BD ---');
+                    const turnoFinal = db.turnos.find(t => t.id === turnoPrueba.id);
+                    console.log('Turno final:', turnoFinal);
+                    
+                    showAlert('Prueba paso a paso completada. Revisa la consola para ver los detalles.', 'success');
+                }
+            } catch (error) {
+                console.error('Error en la prueba paso a paso:', error);
+                showAlert('Error en la prueba: ' + error.message, 'danger');
+            }
+            
+            console.log('=== FIN PRUEBA FLUJO PASO A PASO ===');
+        }
+
+        // Función para debug de event listeners
+        function debugEventListeners() {
+            console.log('=== DEBUG EVENT LISTENERS ===');
+            
+            const marcarBtn = document.getElementById('marcarAtendidoBtn');
+            const cancelarBtn = document.getElementById('cancelarTurnoBtn');
+            const reasignarBtn = document.getElementById('reasignarTurnoBtn');
+            
+            console.log('Botón Marcar Atendido:', marcarBtn);
+            console.log('Botón Cancelar Turno:', cancelarBtn);
+            console.log('Botón Reasignar Turno:', reasignarBtn);
+            
+            if (marcarBtn) {
+                console.log('Event listeners del botón Marcar:', marcarBtn.onclick);
+            }
+            
+            if (cancelarBtn) {
+                console.log('Event listeners del botón Cancelar:', cancelarBtn.onclick);
+            }
+            
+            if (reasignarBtn) {
+                console.log('Event listeners del botón Reasignar:', reasignarBtn.onclick);
+            }
+            
+            console.log('=== FIN DEBUG EVENT LISTENERS ===');
+        }
+
+        // Función para debug de turnos en espera
+        function debugTurnosEnEspera() {
+            console.log('=== DEBUG TURNOS EN ESPERA ===');
+            
+            // Obtener todos los turnos
+            const todosLosTurnos = db.turnos;
+            console.log('Todos los turnos:', todosLosTurnos);
+            
+            // Filtrar turnos en espera
+            const turnosEnEspera = db.getTurnosEnEspera();
+            console.log('Turnos en espera (función getTurnosEnEspera):', turnosEnEspera);
+            
+            // Filtrar manualmente
+            const turnosEnEsperaManual = todosLosTurnos.filter(t => t.estado === 'en_espera');
+            console.log('Turnos en espera (filtrado manual):', turnosEnEsperaManual);
+            
+            // Verificar diferencias
+            if (turnosEnEspera.length !== turnosEnEsperaManual.length) {
+                console.warn('Diferencia en cantidad de turnos en espera!');
+                console.log('Función getTurnosEnEspera:', turnosEnEspera.length);
+                console.log('Filtrado manual:', turnosEnEsperaManual.length);
+            }
+            
+            // Mostrar estados de todos los turnos
+            const estadosTurnos = todosLosTurnos.map(t => ({
+                numero: t.numero,
+                estado: t.estado,
+                email: t.email,
+                servicio: t.servicio
+            }));
+            console.log('Estados de todos los turnos:', estadosTurnos);
+            
+            // Verificar tabla en el DOM
+            const tabla = document.getElementById('tablaTurnos');
+            console.log('Elemento tablaTurnos encontrado:', !!tabla);
+            if (tabla) {
+                console.log('Contenido actual de la tabla:', tabla.innerHTML);
+            }
+            
+            console.log('=== FIN DEBUG TURNOS EN ESPERA ===');
+        }
+
+        // Función para forzar la carga de turnos en espera
+        function forzarCargaTurnosEnEspera() {
+            console.log('=== FORZAR CARGA TURNOS EN ESPERA ===');
+            
+            // Forzar la carga
+            cargarTurnosEnEspera();
+            
+            // Verificar después de un momento
+            setTimeout(() => {
+                console.log('Verificación después de forzar carga:');
+                const tabla = document.getElementById('tablaTurnos');
+                const countElement = document.getElementById('turnosPendientesCount');
+                
+                console.log('Contador actual:', countElement ? countElement.textContent : 'No encontrado');
+                console.log('Contenido de la tabla:', tabla ? tabla.innerHTML : 'No encontrado');
+                
+                // Verificar si hay elementos tr en la tabla
+                if (tabla) {
+                    const filas = tabla.querySelectorAll('tr');
+                    console.log('Número de filas en la tabla:', filas.length);
+                    filas.forEach((fila, index) => {
+                        console.log(`Fila ${index}:`, fila.innerHTML);
+                    });
+                }
+            }, 100);
+            
+            console.log('=== FIN FORZAR CARGA ===');
+        }
+
+        // Función para debug directo de turnos
+        function debugTurnosDirecto() {
+            console.log('=== DEBUG TURNOS DIRECTO ===');
+            
+            // Obtener todos los turnos directamente
+            const todosLosTurnos = db.turnos;
+            console.log('Todos los turnos:', todosLosTurnos);
+            
+            // Filtrar manualmente turnos en espera
+            const turnosEnEspera = todosLosTurnos.filter(t => t.estado === 'en_espera');
+            console.log('Turnos en espera (filtrado manual):', turnosEnEspera);
+            
+            // Mostrar cada turno con su estado
+            todosLosTurnos.forEach((turno, index) => {
+                console.log(`Turno ${index + 1}:`, {
+                    numero: turno.numero,
+                    estado: turno.estado,
+                    email: turno.email,
+                    servicio: turno.servicio,
+                    fechaCreacion: turno.fechaCreacion
+                });
+            });
+            
+            // Verificar la tabla
+            const tabla = document.getElementById('tablaTurnos');
+            console.log('Tabla encontrada:', !!tabla);
+            if (tabla) {
+                console.log('Contenido actual de la tabla:', tabla.innerHTML);
+            }
+            
+            // Intentar actualizar la tabla manualmente
+            if (tabla && turnosEnEspera.length > 0) {
+                const htmlTurnos = turnosEnEspera.map((turno, index) => `
+                    <tr class="fade-in" style="animation-delay: ${index * 0.05}s">
+                        <td><strong>${turno.numero}</strong>${index === 0 ? '<span class="badge bg-warning text-dark ms-2">Siguiente</span>' : ''}</td>
+                        <td>${turno.servicio}</td>
+                        <td><small class="text-muted">${turno.email}</small></td>
+                        <td><small>${formatTime(turno.fechaCreacion)}</small></td>
+                    </tr>
+                `).join('');
+                
+                tabla.innerHTML = htmlTurnos;
+                console.log('Tabla actualizada manualmente con', turnosEnEspera.length, 'turnos');
+                console.log('HTML generado:', htmlTurnos);
+            }
+            
+            console.log('=== FIN DEBUG TURNOS DIRECTO ===');
+        }
+
+        // Función para debug de fechas de turnos
+        function debugFechasTurnos() {
+            console.log('=== DEBUG FECHAS TURNOS ===');
+            const turnosEnEspera = db.getTurnosEnEspera();
+            console.log('Turnos en espera:', turnosEnEspera);
+            
+            turnosEnEspera.forEach((turno, index) => {
+                console.log(`Turno ${index + 1}:`, {
+                    numero: turno.numero,
+                    email: turno.email,
+                    fechaCreacion: turno.fechaCreacion,
+                    fechaHora: turno.fechaHora,
+                    fechaFormateada: formatTime(turno.fechaCreacion),
+                    fechaValida: !isNaN(new Date(turno.fechaCreacion).getTime())
+                });
+            });
+            
+            console.log('=== FIN DEBUG FECHAS TURNOS ===');
+        }
+
+        // Función para forzar actualización del dashboard
+        function forzarActualizacionDashboard() {
+            console.log('=== FORZAR ACTUALIZACIÓN DASHBOARD ===');
+            
+            // Recargar todos los datos
+            cargarInformacionUsuario();
+            cargarCasillasUsuario();
+            cargarTurnosEnEspera();
+            actualizarTurnoActual();
+            actualizarBotonesControl();
+            cargarEstadisticas();
+            
+            console.log('Dashboard actualizado forzadamente');
+            console.log('=== FIN FORZAR ACTUALIZACIÓN ===');
+        }
+
+        // Función para cargar estadísticas (placeholder)
+        function cargarEstadisticas() {
+            console.log('=== CARGAR ESTADÍSTICAS ===');
+            // Esta función puede ser implementada más adelante para mostrar estadísticas
+            console.log('Estadísticas cargadas (placeholder)');
+            console.log('=== FIN CARGAR ESTADÍSTICAS ===');
+        }
+
+        // Función para verificar el estado de la base de datos de turnos
+        function verificarEstadoTurnos() {
+            console.log('=== VERIFICAR ESTADO TURNOS ===');
+            
+            // Verificar si db.turnos existe
+            console.log('db.turnos existe:', !!db.turnos);
+            console.log('db.turnos es array:', Array.isArray(db.turnos));
+            
+            if (db.turnos && Array.isArray(db.turnos)) {
+                console.log('Total de turnos en db.turnos:', db.turnos.length);
+                
+                // Mostrar todos los turnos
+                db.turnos.forEach((turno, index) => {
+                    console.log(`Turno ${index + 1}:`, {
+                        id: turno.id,
+                        numero: turno.numero,
+                        estado: turno.estado,
+                        email: turno.email,
+                        servicio: turno.servicio,
+                        fechaCreacion: turno.fechaCreacion
+                    });
+                });
+                
+                // Filtrar por estado
+                const turnosEnEspera = db.turnos.filter(t => t.estado === 'en_espera');
+                const turnosEnAtencion = db.turnos.filter(t => t.estado === 'en_atencion');
+                const turnosAtendidos = db.turnos.filter(t => t.estado === 'atendido');
+                const turnosCancelados = db.turnos.filter(t => t.estado === 'cancelado');
+                
+                console.log('Turnos por estado:');
+                console.log('- en_espera:', turnosEnEspera.length);
+                console.log('- en_atencion:', turnosEnAtencion.length);
+                console.log('- atendido:', turnosAtendidos.length);
+                console.log('- cancelado:', turnosCancelados.length);
+                
+                // Verificar función getTurnosEnEspera
+                try {
+                    const turnosFuncion = db.getTurnosEnEspera();
+                    console.log('Resultado de db.getTurnosEnEspera():', turnosFuncion);
+                    console.log('¿Es array?:', Array.isArray(turnosFuncion));
+                    console.log('Longitud:', turnosFuncion ? turnosFuncion.length : 'null/undefined');
+                } catch (error) {
+                    console.error('Error al llamar db.getTurnosEnEspera():', error);
+                }
+            } else {
+                console.error('db.turnos no es un array válido');
+            }
+            
+            console.log('=== FIN VERIFICAR ESTADO TURNOS ===');
+        }
+    </script>
+    
+    <!-- Modal para Agregar/Editar Servicio -->
+    <div class="modal fade" id="servicioModal" tabindex="-1" aria-labelledby="servicioModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="servicioModalLabel">Agregar Servicio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="servicioForm">
+                        <input type="hidden" id="servicioId" value="">
+                        <div class="mb-3">
+                            <label for="servicioNombre" class="form-label">Nombre del Servicio</label>
+                            <input type="text" class="form-control" id="servicioNombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="servicioDescripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="servicioDescripcion" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="servicioActivo" checked>
+                                <label class="form-check-label" for="servicioActivo">
+                                    Servicio Activo
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardarServicioBtn">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirmar Acción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmModalBody">
+                    <!-- Contenido dinámico -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmModalBtn">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Horario de Reunión -->
+    <div class="modal fade" id="horarioReunionModal" tabindex="-1" aria-labelledby="horarioReunionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="horarioReunionModalLabel">
+                        <i class="fas fa-calendar-plus me-2"></i>Configurar Horario de Reunión
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="horarioReunionForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="reunionFecha" class="form-label">Fecha de Reunión</label>
+                                    <input type="date" class="form-control" id="reunionFecha" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="reunionDuracion" class="form-label">Duración (horas)</label>
+                                    <select class="form-select" id="reunionDuracion" required>
+                                        <option value="0.5">30 minutos</option>
+                                        <option value="1" selected>1 hora</option>
+                                        <option value="1.5">1.5 horas</option>
+                                        <option value="2">2 horas</option>
+                                        <option value="3">3 horas</option>
+                                        <option value="4">4 horas</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="reunionHoraInicio" class="form-label">Hora de Inicio</label>
+                                    <input type="time" class="form-control" id="reunionHoraInicio" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="reunionMotivo" class="form-label">Motivo de la Reunión</label>
+                                    <input type="text" class="form-control" id="reunionMotivo" placeholder="Ej: Reunión de personal" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reunionServicios" class="form-label">Servicios Afectados</label>
+                            <div id="reunionServiciosContainer" class="d-flex flex-wrap gap-2">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Nota:</strong> Los turnos existentes recibirán una notificación con el tiempo estimado de reanudación.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardarHorarioReunionBtn">Guardar Horario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Horarios de Atención -->
+    <div class="modal fade" id="horariosAtencionModal" tabindex="-1" aria-labelledby="horariosAtencionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="horariosAtencionModalLabel">
+                        <i class="fas fa-clock me-2"></i>Configurar Horarios de Atención
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="horariosAtencionForm">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary">Horarios de Lunes a Viernes</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="lunesViernesInicio" class="form-label">Hora de Inicio</label>
+                                    <input type="time" class="form-control" id="lunesViernesInicio" value="08:00">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="lunesViernesFin" class="form-label">Hora de Fin</label>
+                                    <input type="time" class="form-control" id="lunesViernesFin" value="15:00">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary">Horarios de Fin de Semana</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="finSemanaInicio" class="form-label">Hora de Inicio</label>
+                                    <input type="time" class="form-control" id="finSemanaInicio" value="07:00">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="finSemanaFin" class="form-label">Hora de Fin</label>
+                                    <input type="time" class="form-control" id="finSemanaFin" value="09:00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="text-primary">Horarios de Comida</h6>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="comidaInicio" class="form-label">Inicio de Comida</label>
+                                    <input type="time" class="form-control" id="comidaInicio" value="12:00">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="comidaFin" class="form-label">Fin de Comida</label>
+                                    <input type="time" class="form-control" id="comidaFin" value="13:00">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="horariosServicios" class="form-label">Servicios Afectados</label>
+                            <div id="horariosServiciosContainer" class="d-flex flex-wrap gap-2">
+                                <!-- Se llena dinámicamente -->
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Importante:</strong> Si una casilla está inactiva y no hay otra casilla con el mismo servicio, el servicio quedará inactivo.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardarHorariosAtencionBtn">Guardar Horarios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ver Horarios Actuales -->
+    <div class="modal fade" id="verHorariosModal" tabindex="-1" aria-labelledby="verHorariosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="verHorariosModalLabel">
+                        <i class="fas fa-eye me-2"></i>Horarios Actuales de la Casilla
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="verHorariosModalBody">
+                    <!-- Se llena dinámicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+
+        // ==================== FUNCIONES DE CONFIGURACIÓN DE HORARIOS ====================
+
+        function mostrarModalHorarioReunion() {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            if (!casillaId) {
+                showAlert('Por favor selecciona una casilla primero', 'warning');
+                return;
+            }
+
+            const casilla = db.getCasilla(casillaId);
+            if (!casilla) {
+                showAlert('Casilla no encontrada', 'error');
+                return;
+            }
+
+            // Configurar fecha mínima (hoy)
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('reunionFecha').min = today;
+            document.getElementById('reunionFecha').value = today;
+
+            // Configurar hora actual
+            const now = new Date();
+            const currentTime = now.toTimeString().slice(0, 5);
+            document.getElementById('reunionHoraInicio').value = currentTime;
+
+            // Cargar servicios de la casilla
+            cargarServiciosReunion(casilla);
+
+            const modal = new bootstrap.Modal(document.getElementById('horarioReunionModal'));
+            modal.show();
+        }
+
+        function mostrarModalHorariosAtencion() {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            if (!casillaId) {
+                showAlert('Por favor selecciona una casilla primero', 'warning');
+                return;
+            }
+
+            const casilla = db.getCasilla(casillaId);
+            if (!casilla) {
+                showAlert('Casilla no encontrada', 'error');
+                return;
+            }
+
+            // Cargar horarios actuales si existen
+            cargarHorariosActuales(casilla);
+
+            // Cargar servicios de la casilla
+            cargarServiciosHorarios(casilla);
+
+            const modal = new bootstrap.Modal(document.getElementById('horariosAtencionModal'));
+            modal.show();
+        }
+
+        function mostrarModalVerHorarios() {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            if (!casillaId) {
+                showAlert('Por favor selecciona una casilla primero', 'warning');
+                return;
+            }
+
+            const casilla = db.getCasilla(casillaId);
+            if (!casilla) {
+                showAlert('Casilla no encontrada', 'error');
+                return;
+            }
+
+            mostrarHorariosActuales(casilla);
+
+            const modal = new bootstrap.Modal(document.getElementById('verHorariosModal'));
+            modal.show();
+        }
+
+        function cargarServiciosReunion(casilla) {
+            const container = document.getElementById('reunionServiciosContainer');
+            const servicios = db.getServicios().filter(s => casilla.servicios.includes(s.id));
+            
+            container.innerHTML = servicios.map(servicio => `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="${servicio.id}" id="reunion_servicio_${servicio.id}" checked>
+                    <label class="form-check-label" for="reunion_servicio_${servicio.id}">
+                        ${servicio.nombre}
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function cargarServiciosHorarios(casilla) {
+            const container = document.getElementById('horariosServiciosContainer');
+            const servicios = db.getServicios().filter(s => casilla.servicios.includes(s.id));
+            
+            container.innerHTML = servicios.map(servicio => `
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="${servicio.id}" id="horarios_servicio_${servicio.id}" checked>
+                    <label class="form-check-label" for="horarios_servicio_${servicio.id}">
+                        ${servicio.nombre}
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function cargarHorariosActuales(casilla) {
+            if (casilla.horarios) {
+                if (casilla.horarios.lunesViernes) {
+                    document.getElementById('lunesViernesInicio').value = casilla.horarios.lunesViernes.inicio;
+                    document.getElementById('lunesViernesFin').value = casilla.horarios.lunesViernes.fin;
+                }
+                if (casilla.horarios.finSemana) {
+                    document.getElementById('finSemanaInicio').value = casilla.horarios.finSemana.inicio;
+                    document.getElementById('finSemanaFin').value = casilla.horarios.finSemana.fin;
+                }
+                if (casilla.horarios.comida) {
+                    document.getElementById('comidaInicio').value = casilla.horarios.comida.inicio;
+                    document.getElementById('comidaFin').value = casilla.horarios.comida.fin;
+                }
+            }
+        }
+
+        function guardarHorarioReunion() {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            const casilla = db.getCasilla(casillaId);
+            
+            if (!casilla) {
+                showAlert('Casilla no encontrada', 'error');
+                return;
+            }
+
+            const fecha = document.getElementById('reunionFecha').value;
+            const horaInicio = document.getElementById('reunionHoraInicio').value;
+            const duracion = parseFloat(document.getElementById('reunionDuracion').value);
+            const motivo = document.getElementById('reunionMotivo').value;
+
+            if (!fecha || !horaInicio || !motivo) {
+                showAlert('Por favor completa todos los campos requeridos', 'warning');
+                return;
+            }
+
+            // Obtener servicios seleccionados
+            const serviciosSeleccionados = Array.from(document.querySelectorAll('#reunionServiciosContainer input:checked'))
+                .map(input => parseInt(input.value));
+
+            if (serviciosSeleccionados.length === 0) {
+                showAlert('Por favor selecciona al menos un servicio', 'warning');
+                return;
+            }
+
+            // Crear horario de reunión
+            const horarioReunion = {
+                id: Date.now(),
+                casillaId: casillaId,
+                fecha: fecha,
+                horaInicio: horaInicio,
+                duracion: duracion,
+                motivo: motivo,
+                servicios: serviciosSeleccionados,
+                tipo: 'reunion',
+                activo: true,
+                fechaCreacion: new Date().toISOString()
+            };
+
+            // Guardar en la base de datos
+            if (!db.horariosInactividad) {
+                db.horariosInactividad = [];
+            }
+            db.horariosInactividad.push(horarioReunion);
+            db.guardarDatos();
+
+            // Notificar turnos existentes
+            notificarTurnosSobreInactividad(horarioReunion);
+
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('horarioReunionModal'));
+            modal.hide();
+
+            showAlert('Horario de reunión configurado correctamente', 'success');
+        }
+
+        function guardarHorariosAtencion() {
+            const casillaId = parseInt(document.getElementById('casillaAdmin').value);
+            const casilla = db.getCasilla(casillaId);
+            
+            if (!casilla) {
+                showAlert('Casilla no encontrada', 'error');
+                return;
+            }
+
+            const lunesViernesInicio = document.getElementById('lunesViernesInicio').value;
+            const lunesViernesFin = document.getElementById('lunesViernesFin').value;
+            const finSemanaInicio = document.getElementById('finSemanaInicio').value;
+            const finSemanaFin = document.getElementById('finSemanaFin').value;
+            const comidaInicio = document.getElementById('comidaInicio').value;
+            const comidaFin = document.getElementById('comidaFin').value;
+
+            // Obtener servicios seleccionados
+            const serviciosSeleccionados = Array.from(document.querySelectorAll('#horariosServiciosContainer input:checked'))
+                .map(input => parseInt(input.value));
+
+            if (serviciosSeleccionados.length === 0) {
+                showAlert('Por favor selecciona al menos un servicio', 'warning');
+                return;
+            }
+
+            // Crear horarios de atención
+            const horariosAtencion = {
+                casillaId: casillaId,
+                lunesViernes: {
+                    inicio: lunesViernesInicio,
+                    fin: lunesViernesFin
+                },
+                finSemana: {
+                    inicio: finSemanaInicio,
+                    fin: finSemanaFin
+                },
+                comida: {
+                    inicio: comidaInicio,
+                    fin: comidaFin
+                },
+                servicios: serviciosSeleccionados,
+                tipo: 'atencion',
+                activo: true,
+                fechaCreacion: new Date().toISOString()
+            };
+
+            // Guardar en la casilla
+            casilla.horarios = horariosAtencion;
+            db.guardarDatos();
+
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('horariosAtencionModal'));
+            modal.hide();
+
+            showAlert('Horarios de atención configurados correctamente', 'success');
+        }
+
+        function mostrarHorariosActuales(casilla) {
+            const modalBody = document.getElementById('verHorariosModalBody');
+            
+            let html = '<div class="row">';
+            
+            // Horarios de atención
+            if (casilla.horarios) {
+                html += `
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Horarios de Atención</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Lunes a Viernes:</strong> ${casilla.horarios.lunesViernes?.inicio || 'No configurado'} - ${casilla.horarios.lunesViernes?.fin || 'No configurado'}</p>
+                                <p><strong>Fin de Semana:</strong> ${casilla.horarios.finSemana?.inicio || 'No configurado'} - ${casilla.horarios.finSemana?.fin || 'No configurado'}</p>
+                                <p><strong>Comida:</strong> ${casilla.horarios.comida?.inicio || 'No configurado'} - ${casilla.horarios.comida?.fin || 'No configurado'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Horarios de reunión activos
+            const reunionesActivas = db.horariosInactividad?.filter(h => 
+                h.casillaId === casilla.id && h.tipo === 'reunion' && h.activo
+            ) || [];
+
+            html += `
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="fas fa-calendar-plus me-2"></i>Reuniones Programadas</h6>
+                        </div>
+                        <div class="card-body">
+                            ${reunionesActivas.length > 0 ? 
+                                reunionesActivas.map(reunion => `
+                                    <div class="border-bottom pb-2 mb-2">
+                                        <p><strong>Fecha:</strong> ${reunion.fecha}</p>
+                                        <p><strong>Hora:</strong> ${reunion.horaInicio} (${reunion.duracion}h)</p>
+                                        <p><strong>Motivo:</strong> ${reunion.motivo}</p>
+                                    </div>
+                                `).join('') : 
+                                '<p class="text-muted">No hay reuniones programadas</p>'
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            html += '</div>';
+
+            // Estado actual de la casilla
+            const estadoActual = verificarEstadoCasilla(casilla);
+            html += `
+                <div class="alert alert-${estadoActual.activa ? 'success' : 'warning'}">
+                    <i class="fas fa-${estadoActual.activa ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                    <strong>Estado Actual:</strong> ${estadoActual.activa ? 'Casilla Activa' : 'Casilla Inactiva'}
+                    ${!estadoActual.activa ? `<br><small>Razón: ${estadoActual.razon}</small>` : ''}
+                </div>
+            `;
+
+            modalBody.innerHTML = html;
+        }
+
+        function notificarTurnosSobreInactividad(horarioInactividad) {
+            const turnosAfectados = db.turnos.filter(turno => 
+                turno.estado === 'en_espera' && 
+                horarioInactividad.servicios.includes(turno.servicioId)
+            );
+
+            turnosAfectados.forEach(turno => {
+                const tiempoEstimado = calcularTiempoEstimadoReanudacion(horarioInactividad);
+                turno.notificacionInactividad = {
+                    mensaje: `Servicio temporalmente inactivo por: ${horarioInactividad.motivo}`,
+                    tiempoEstimado: tiempoEstimado,
+                    fechaNotificacion: new Date().toISOString()
+                };
+            });
+
+            db.guardarDatos();
+        }
+
+        function calcularTiempoEstimadoReanudacion(horarioInactividad) {
+            const ahora = new Date();
+            const fechaReunion = new Date(horarioInactividad.fecha + 'T' + horarioInactividad.horaInicio);
+            const finReunion = new Date(fechaReunion.getTime() + (horarioInactividad.duracion * 60 * 60 * 1000));
+            
+            if (ahora < fechaReunion) {
+                return `Reanudación estimada: ${finReunion.toLocaleString('es-ES')}`;
+            } else if (ahora < finReunion) {
+                const tiempoRestante = Math.ceil((finReunion - ahora) / (1000 * 60));
+                return `Reanudación en aproximadamente ${tiempoRestante} minutos`;
+            } else {
+                return 'Servicio reanudado';
+            }
+        }
+
+        function verificarEstadoCasilla(casilla) {
+            const ahora = new Date();
+            const diaSemana = ahora.getDay(); // 0 = domingo, 1 = lunes, etc.
+            const horaActual = ahora.toTimeString().slice(0, 5);
+
+            // Verificar horarios de atención
+            if (casilla.horarios) {
+                let horarioAplicable = null;
+
+                if (diaSemana >= 1 && diaSemana <= 5) { // Lunes a viernes
+                    horarioAplicable = casilla.horarios.lunesViernes;
+                } else { // Fin de semana
+                    horarioAplicable = casilla.horarios.finSemana;
+                }
+
+                if (horarioAplicable && (horaActual < horarioAplicable.inicio || horaActual > horarioAplicable.fin)) {
+                    return {
+                        activa: false,
+                        razon: `Fuera del horario de atención (${horarioAplicable.inicio} - ${horarioAplicable.fin})`
+                    };
+                }
+
+                // Verificar horario de comida
+                if (casilla.horarios.comida && 
+                    horaActual >= casilla.horarios.comida.inicio && 
+                    horaActual <= casilla.horarios.comida.fin) {
+                    return {
+                        activa: false,
+                        razon: `Horario de comida (${casilla.horarios.comida.inicio} - ${casilla.horarios.comida.fin})`
+                    };
+                }
+            }
+
+            // Verificar reuniones programadas
+            const reunionesActivas = db.horariosInactividad?.filter(h => 
+                h.casillaId === casilla.id && 
+                h.tipo === 'reunion' && 
+                h.activo &&
+                h.fecha === ahora.toISOString().split('T')[0]
+            ) || [];
+
+            for (const reunion of reunionesActivas) {
+                const horaReunion = reunion.horaInicio;
+                const finReunion = new Date(reunion.fecha + 'T' + horaReunion);
+                finReunion.setHours(finReunion.getHours() + reunion.duracion);
+
+                if (ahora >= new Date(reunion.fecha + 'T' + horaReunion) && ahora <= finReunion) {
+                    return {
+                        activa: false,
+                        razon: `Reunión programada: ${reunion.motivo}`
+                    };
+                }
+            }
+
+            return { activa: true, razon: '' };
+        }
+
+        // ==================== FUNCIONES AUXILIARES ====================
+
+        function showAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+        
+        // Ejecutar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar permisos y actualizar interfaz
+            if (auth.isAdmin()) {
+                document.getElementById('configuracionBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('configuracionBtn').style.display = 'none';
+            }
+            
+            // Actualizar información del usuario en el dropdown
+            const usuario = auth.getCurrentUser();
+            if (usuario) {
+                const nombreElements = document.querySelectorAll('[data-user-info="nombre"]');
+                const correoElements = document.querySelectorAll('[data-user-info="correo"]');
+                const permisosElements = document.querySelectorAll('[data-user-info="permisos"]');
+                
+                nombreElements.forEach(el => el.textContent = usuario.nombre);
+                correoElements.forEach(el => el.textContent = usuario.correo);
+                permisosElements.forEach(el => el.textContent = usuario.permisos === 'admin' ? 'Administrador' : 'Usuario');
+            }
+        });
+    </script>
+</body>
+</html>

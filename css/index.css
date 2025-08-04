@@ -1,0 +1,249 @@
+/* Estilos específicos para index.html */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.bg-fondo-cesun {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: -2;
+    background: url('images/Fondo de pantalla 2024.png') center center/cover no-repeat;
+    background-attachment: fixed;
+}
+
+.login-main-container {
+    min-height: calc(100vh - 160px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(25, 118, 210, 0.13), 0 2px 8px rgba(0,0,0,0.08);
+    width: 100%;
+    text-align: center;
+    animation: fadeInCard 0.7s cubic-bezier(.39,.58,.57,1) both;
+}
+
+@keyframes fadeInCard {
+    0% { opacity: 0; transform: translateY(40px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.login-container h2 {
+    margin-bottom: 1.5rem;
+    color: #0a3a6a;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    width: 100%;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #0a3a6a;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.input-group {
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+}
+
+.input-group-text {
+    background: #f4f8fb;
+    border-right: 0;
+    color: #1976d2;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    padding: 0 0.9rem;
+    border-radius: 6px 0 0 6px;
+    border: 1px solid #b0c4de;
+    border-right: none;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid #b0c4de;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border 0.2s;
+    background: #f8fafc;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.13);
+    background: #fff;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 0.8rem;
+    background: linear-gradient(90deg, #1976d2 60%, #0a3a6a 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+}
+
+.btn-login:hover {
+    background: linear-gradient(90deg, #0a3a6a 60%, #1976d2 100%);
+    box-shadow: 0 4px 16px rgba(25, 118, 210, 0.18);
+}
+
+.btn-login-outline {
+    width: 100%;
+    padding: 0.8rem;
+    background: transparent;
+    color: #1976d2;
+    border: 2px solid #1976d2;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-login-outline:hover {
+    background: rgba(25, 118, 210, 0.1);
+}
+
+.invalid-feedback {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    text-align: left;
+}
+
+.form-text {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    text-align: left;
+}
+
+/* Estilos para el turno generado */
+.white-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.turno-number-display {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.turno-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1976d2;
+    margin: 0;
+}
+
+.turno-label {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin: 0.5rem 0 0 0;
+}
+
+.cesun-card-header, .cesun-card h2, .cesun-card h3 {
+  font-weight: 800;
+  font-size: 1.8rem;
+  letter-spacing: 0.5px;
+  color: #0a3a6a;
+}
+
+.turno-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.turno-info p {
+    margin: 0.5rem 0;
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+.btn-cancelar {
+    width: 100%;
+    padding: 0.8rem;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.btn-cancelar:hover {
+    background: #c82333;
+}
+
+.d-flex.gap-2 {
+    display: flex;
+    gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        padding: 1.5rem;
+    }
+    
+    .login-container h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1.2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+    
+    .turno-number {
+        font-size: 2rem;
+    }
+    
+    .d-flex.gap-2 {
+        flex-direction: column;
+    }
+}

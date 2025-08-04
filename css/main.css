@@ -1,0 +1,250 @@
+:root {
+    --cesun-blue: #0056b3;
+    --cesun-dark-blue: #003366;
+    --cesun-gold: #d4af37;
+    --cesun-light: #f8f9fa;
+    --cesun-dark: #212529;
+    --cesun-success: #28a745;
+    --cesun-danger: #dc3545;
+    --cesun-warning: #ffc107;
+    --cesun-info: #17a2b8;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--cesun-light);
+    color: var(--cesun-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.cesun-header {
+    background: linear-gradient(135deg, var(--cesun-dark-blue), var(--cesun-blue));
+    color: white;
+    padding: 1rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 100;
+}
+
+.cesun-logo {
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+.cesun-logo:hover {
+    transform: scale(1.05);
+}
+
+.cesun-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    background-color: white;
+}
+
+.cesun-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+}
+
+.cesun-card-header {
+    background: linear-gradient(135deg, var(--cesun-blue), var(--cesun-dark-blue));
+    color: white;
+    padding: 1.25rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cesun-btn-primary {
+    background: linear-gradient(135deg, var(--cesun-blue), var(--cesun-dark-blue));
+    border: none;
+    padding: 12px 24px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cesun-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cesun-btn-secondary {
+    background: linear-gradient(135deg, var(--cesun-gold), #e6c260);
+    color: var(--cesun-dark);
+    border: none;
+    padding: 12px 24px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.turno-number {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--cesun-blue), var(--cesun-dark-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 1rem 0;
+    letter-spacing: 1px;
+}
+
+.qr-container {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    display: inline-block;
+    margin: 1.5rem 0;
+    border: 1px solid #eee;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.qr-container:hover {
+    transform: scale(1.03);
+}
+
+.status-badge {
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge-waiting {
+    background-color: rgba(255, 193, 7, 0.2);
+    color: #856404;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.badge-attending {
+    background-color: rgba(40, 167, 69, 0.2);
+    color: #155724;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.badge-completed {
+    background-color: rgba(23, 162, 184, 0.2);
+    color: #0c5460;
+    border: 1px solid rgba(23, 162, 184, 0.3);
+}
+
+.casilla-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.casilla-free {
+    background-color: var(--cesun-success);
+}
+
+.casilla-busy {
+    background-color: var(--cesun-danger);
+}
+
+.turno-actual-card {
+    border-left: 6px solid var(--cesun-gold);
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cesun-footer {
+    background-color: var(--cesun-dark);
+    color: white;
+    padding: 1.5rem 0;
+    margin-top: auto;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Notificaciones */
+.cesun-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1100;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .turno-number {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .turno-number {
+        font-size: 2rem;
+    }
+    
+    .cesun-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .cesun-btn-primary, .cesun-btn-secondary {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Efectos para la pantalla de espera */
+.dashboard-screen {
+    background-color: #f0f2f5;
+}
+
+.dashboard-screen .cesun-card {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Mejoras para la tabla */
+.table-hover tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 86, 179, 0.05);
+    transform: translateX(4px);
+}
+
+/* Efecto de carga */
+.loading-spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid rgba(0, 86, 179, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--cesun-blue);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+} 

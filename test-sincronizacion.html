@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Sincronización - CESUN Universidad</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .test-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+            max-width: 800px;
+            padding: 30px;
+        }
+        .status-indicator {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .status-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .log-container {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 2px 0;
+            padding: 2px 0;
+        }
+        .log-time { color: #6c757d; }
+        .log-success { color: #28a745; }
+        .log-error { color: #dc3545; }
+        .log-info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-container">
+            <div class="text-center mb-4">
+                <h1><i class="fas fa-sync-alt me-2"></i>Prueba de Sincronización</h1>
+                <p class="text-muted">Verificación de actualizaciones en tiempo real</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-cogs me-2"></i>Estado del Sistema</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="statusContainer">
+                                <div class="status-indicator status-warning">
+                                    <i class="fas fa-clock me-2"></i>Inicializando...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-play me-2"></i>Acciones de Prueba</h5>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary btn-sm mb-2" onclick="probarSincronizacion()">
+                                <i class="fas fa-sync me-2"></i>Probar Sincronización
+                            </button>
+                            <br>
+                            <button class="btn btn-success btn-sm mb-2" onclick="generarTurnoPrueba()">
+                                <i class="fas fa-plus me-2"></i>Generar Turno de Prueba
+                            </button>
+                            <br>
+                            <button class="btn btn-info btn-sm mb-2" onclick="verificarEstado()">
+                                <i class="fas fa-search me-2"></i>Verificar Estado
+                            </button>
+                            <br>
+                            <button class="btn btn-warning btn-sm" onclick="limpiarLogs()">
+                                <i class="fas fa-trash me-2"></i>Limpiar Logs
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-terminal me-2"></i>Logs de Sincronización</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="logContainer" class="log-container">
+                                <div class="log-entry">
+                                    <span class="log-time">[Iniciando]</span>
+                                    <span class="log-info">Sistema de prueba cargado</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>Instrucciones</h5>
+                        </div>
+                        <div class="card-body">
+                            <ol>
+                                <li>Abre <strong>admin.html</strong> en otra pestaña</li>
+                                <li>Abre <strong>dashboard.html</strong> en otra pestaña</li>
+                                <li>Haz clic en "Probar Sincronización" o "Generar Turno de Prueba"</li>
+                                <li>Verifica que los cambios se reflejen automáticamente en las otras pestañas</li>
+                                <li>Revisa los logs para ver el flujo de eventos</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        let logCount = 0;
+        
+        function agregarLog(mensaje, tipo = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-time">[${timestamp}]</span>
+                <span class="log-${tipo}">${mensaje}</span>
+            `;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            logCount++;
+            
+            // Limitar logs a 100 entradas
+            if (logCount > 100) {
+                logContainer.removeChild(logContainer.firstChild);
+                logCount--;
+            }
+        }
+        
+        function actualizarEstado(mensaje, tipo = 'warning') {
+            const statusContainer = document.getElementById('statusContainer');
+            statusContainer.innerHTML = `
+                <div class="status-indicator status-${tipo}">
+                    <i class="fas fa-${tipo === 'success' ? 'check' : tipo === 'error' ? 'times' : 'info'} me-2"></i>${mensaje}
+                </div>
+            `;
+        }
+        
+        function probarSincronizacion() {
+            agregarLog('🧪 Iniciando prueba de sincronización...', 'info');
+            actualizarEstado('Probando sincronización...', 'warning');
+            
+            try {
+                // Verificar que las funciones necesarias estén disponibles
+                if (typeof emitirEventoGlobal !== 'function') {
+                    throw new Error('Función emitirEventoGlobal no disponible');
+                }
+                
+                if (typeof db === 'undefined') {
+                    throw new Error('Base de datos no disponible');
+                }
+                
+                agregarLog('✅ Funciones básicas disponibles', 'success');
+                
+                // Crear evento de prueba
+                const turnoPrueba = {
+                    numero: 'TEST' + Date.now().toString().slice(-3),
+                    nombre: 'Usuario Prueba',
+                    email: 'prueba@cesun.edu.mx',
+                    servicio: 'Servicio de Prueba',
+                    fechaCreacion: new Date().toISOString()
+                };
+                
+                agregarLog(`📝 Turno de prueba creado: ${turnoPrueba.numero}`, 'info');
+                
+                // Emitir evento global
+                emitirEventoGlobal('dataChanged', { 
+                    tipo: 'turnoGenerado', 
+                    turno: turnoPrueba,
+                    timestamp: Date.now() 
+                });
+                
+                agregarLog('📡 Evento global emitido correctamente', 'success');
+                actualizarEstado('Prueba completada - Revisa otras pestañas', 'success');
+                
+                setTimeout(() => {
+                    agregarLog('⏰ Verificación automática en 3 segundos...', 'info');
+                }, 1000);
+                
+            } catch (error) {
+                agregarLog(`❌ Error en prueba: ${error.message}`, 'error');
+                actualizarEstado(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function generarTurnoPrueba() {
+            agregarLog('🎫 Generando turno de prueba real...', 'info');
+            actualizarEstado('Generando turno...', 'warning');
+            
+            try {
+                if (typeof generarTurnoSeguro !== 'function') {
+                    throw new Error('Función generarTurnoSeguro no disponible');
+                }
+                
+                const turno = generarTurnoSeguro(
+                    'Usuario Prueba ' + Date.now().toString().slice(-3),
+                    'prueba@cesun.edu.mx',
+                    'Servicio de Prueba'
+                );
+                
+                if (turno) {
+                    agregarLog(`✅ Turno generado: ${turno.numero}`, 'success');
+                    actualizarEstado(`Turno ${turno.numero} generado exitosamente`, 'success');
+                } else {
+                    agregarLog('❌ Error al generar turno', 'error');
+                    actualizarEstado('Error al generar turno', 'error');
+                }
+                
+            } catch (error) {
+                agregarLog(`❌ Error: ${error.message}`, 'error');
+                actualizarEstado(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function verificarEstado() {
+            agregarLog('🔍 Verificando estado del sistema...', 'info');
+            
+            try {
+                // Verificar localStorage
+                const eventoGlobal = localStorage.getItem('eventoGlobal');
+                agregarLog(`📦 localStorage eventoGlobal: ${eventoGlobal ? 'Presente' : 'Vacío'}`, 'info');
+                
+                // Verificar base de datos
+                if (typeof db !== 'undefined') {
+                    const turnos = db.getTurnosEnEspera();
+                    agregarLog(`📊 Turnos en espera: ${turnos.length}`, 'info');
+                    
+                    const casillas = db.getCasillas();
+                    agregarLog(`🏢 Casillas disponibles: ${casillas.length}`, 'info');
+                } else {
+                    agregarLog('❌ Base de datos no disponible', 'error');
+                }
+                
+                // Verificar funciones
+                const funciones = [
+                    'emitirEventoGlobal',
+                    'generarTurnoSeguro',
+                    'cargarTurnosEnEspera',
+                    'actualizarDashboard'
+                ];
+                
+                funciones.forEach(func => {
+                    const disponible = typeof window[func] === 'function';
+                    agregarLog(`${disponible ? '✅' : '❌'} ${func}: ${disponible ? 'Disponible' : 'No disponible'}`, disponible ? 'success' : 'error');
+                });
+                
+                actualizarEstado('Verificación completada', 'success');
+                
+            } catch (error) {
+                agregarLog(`❌ Error en verificación: ${error.message}`, 'error');
+                actualizarEstado(`Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function limpiarLogs() {
+            const logContainer = document.getElementById('logContainer');
+            logContainer.innerHTML = `
+                <div class="log-entry">
+                    <span class="log-time">[${new Date().toLocaleTimeString()}]</span>
+                    <span class="log-info">Logs limpiados</span>
+                </div>
+            `;
+            logCount = 1;
+            agregarLog('🧹 Logs limpiados', 'info');
+        }
+        
+        // Configurar listeners para eventos
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'eventoGlobal') {
+                try {
+                    const evento = JSON.parse(e.newValue);
+                    agregarLog(`🔄 Evento recibido: ${evento.tipo}`, 'info');
+                    
+                    if (evento.data && evento.data.tipo === 'turnoGenerado') {
+                        agregarLog(`📝 Nuevo turno: ${evento.data.turno.numero}`, 'success');
+                        actualizarEstado(`Turno ${evento.data.turno.numero} recibido`, 'success');
+                    }
+                } catch (error) {
+                    agregarLog(`❌ Error al procesar evento: ${error.message}`, 'error');
+                }
+            }
+        });
+        
+        // Listener para eventos personalizados
+        window.addEventListener('turnoGenerado', function(event) {
+            agregarLog(`🎯 Evento personalizado recibido: ${event.detail.turno.numero}`, 'success');
+        });
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            agregarLog('🚀 Sistema de prueba inicializado', 'success');
+            actualizarEstado('Sistema listo para pruebas', 'success');
+            
+            // Verificar estado inicial
+            setTimeout(() => {
+                verificarEstado();
+            }, 1000);
+        });
+    </script>
+</body>
+</html> 

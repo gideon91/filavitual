@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla de Espera - CESUN Universidad</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body class="dashboard-screen">
+    <!-- Header ajustado -->
+    <header class="cesun-header position-relative">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center py-3">
+                <div class="d-flex align-items-center" style="margin-left: -15px;">
+                    <img src="../images/logo.png" alt="CESUN Universidad" class="cesun-logo me-3">
+                    <h1 class="h4 mb-0">Pantalla de Espera</h1>
+                </div>
+                <div class="d-flex align-items-center">
+                    <button onclick="verificarEstadoBD()" class="btn btn-sm btn-outline-light me-2" title="Debug">
+                        <i class="fas fa-bug"></i>
+                    </button>
+                    <button onclick="forzarActualizacionDashboard()" class="btn btn-sm btn-outline-light me-2" title="Actualizar Dashboard">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <div class="time-display">
+                        <div class="time-label">Hora Actual</div>
+                        <div class="time-value" id="horaActual">--:--:--</div>
+                    </div>
+                    <button onclick="cerrarVentanaDashboard()" class="close-btn ms-3">
+                        <i class="fas fa-times"></i>
+                        <span>Cerrar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="container-fluid px-4 py-4">
+        <div class="row g-4">
+            <!-- Sección principal - Casillas en atención -->
+            <section class="col-lg-8">
+                <div class="card-container h-100 d-flex flex-column">
+                    <div class="section-header mb-0">
+                        <i class="fas fa-user-check"></i>
+                        <h2 class="mb-0">Casillas en Atención</h2>
+                    </div>
+                    <div class="grid-container flex-grow-1" id="casillasContainer">
+                        <!-- Las casillas se cargan dinámicamente -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Sidebar - Información complementaria -->
+            <aside class="col-lg-4">
+                <!-- Estado de Servicios -->
+                <div class="card-container mb-4">
+                    <div class="section-header mb-0">
+                        <i class="fas fa-cogs"></i>
+                        <h2 class="mb-0">Estado de Servicios</h2>
+                    </div>
+                    <div class="services-status-container">
+                        <div id="serviciosStatusContainer">
+                            <!-- El estado de servicios se carga dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Próximos turnos -->
+                <div class="card-container mb-4">
+                    <div class="section-header mb-0">
+                        <i class="fas fa-list-ol"></i>
+                        <h2 class="mb-0">Próximos Turnos</h2>
+                    </div>
+                    <div class="ticket-list-container">
+                        <div class="ticket-list-header">
+                            <span><i class="fas fa-ticket-alt me-1"></i>Turno</span>
+                            <span><i class="fas fa-cog me-1"></i>Servicio</span>
+                            <span><i class="fas fa-clock me-1"></i>Hora</span>
+                        </div>
+                        <div class="ticket-list" id="proximosTurnosContainer">
+                            <!-- Los próximos turnos se cargan dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer ajustado para coincidir con login.html -->
+    <footer class="cesun-footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">
+                        <i class="fas fa-university me-2"></i>
+                        CESUN Universidad - Sistema de Gestión de Turnos
+                    </p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p class="mb-0">
+                        <i class="fas fa-calendar me-2"></i>
+                        © <span id="currentYear"></span> Todos los derechos reservados
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/fondo.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script>
+        // Actualizar año en el footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        function cerrarVentanaDashboard() {
+            window.close();
+            setTimeout(function() {
+                if (!window.closed) {
+                    alert('Por razones de seguridad del navegador, solo se puede cerrar esta ventana si fue abierta por el sistema. Si no se cierra automáticamente, ciérrela manualmente.');
+                }
+            }, 300);
+        }
+    </script>
+    <script>
+        // Listener para eventos globales entre pestañas (refuerzo para dashboard)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'eventoGlobal') {
+                const evento = JSON.parse(e.newValue);
+                if (evento.tipo === 'dataChanged') {
+                    if (typeof cargarTurnosEnEspera === 'function') cargarTurnosEnEspera();
+                    if (typeof actualizarTurnoActual === 'function') actualizarTurnoActual();
+                    if (typeof actualizarDashboard === 'function') actualizarDashboard();
+                }
+                if (evento.tipo === 'turnoLlamado') {
+                    if (typeof eventSystem !== 'undefined') {
+                        eventSystem.emit('turnoLlamado', evento.data);
+                    }
+                }
+            }
+        });
+        // Globalizar funciones para htmx y storage
+        window.cargarTurnosEnEspera = cargarTurnosEnEspera;
+        window.actualizarTurnoActual = actualizarTurnoActual;
+        window.actualizarDashboard = actualizarDashboard;
+    </script>
+</body>
+</html>

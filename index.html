@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Turnos - CESUN Universidad</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CSS personalizado -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/index.css">
+    <style>
+        body {
+            background: none !important;
+        }
+        .bg-fondo-cesun {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -2;
+            background: url('images/Fondo de pantalla 2024.png') center center/cover no-repeat;
+        }
+        .cesun-card-header, .cesun-card h2, .cesun-card h3 {
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+            color: #0a3a6a;
+        }
+        .turno-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .turno-info p {
+            margin: 0.5rem 0;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+        .btn-cancelar {
+            width: 100%;
+            padding: 0.8rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn-cancelar:hover {
+            background: #c82333;
+        }
+        .d-flex.gap-2 {
+            display: flex;
+            gap: 0.5rem;
+        }
+    </style>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+    <div class="bg-fondo-cesun"></div>
+    
+    <!-- Header -->
+    <header class="cesun-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <img src="images/logo.png" alt="CESUN Universidad" class="cesun-logo me-3">
+                        <div>
+                            <h1 class="h4 mb-0">Sistema de Gestión de Turnos</h1>
+                            <small class="opacity-75">CESUN Universidad</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="header-actions">
+                        <button class="btn btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalConsultarTurno">
+                            <i class="fas fa-search me-1"></i>Consultar Turno Activo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="login-main-container">
+        <div class="container">
+            <div class="form-container">
+                <div class="login-container">
+                    <h2 class="mb-4">Solicitar Turno</h2>
+                    <form id="turnoForm" autocomplete="on" onsubmit="submitForm(); return false;">
+                        <div class="form-group mb-3">
+                            <label for="nombre" class="mb-1">Nombre completo</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" id="nombre" class="form-control" placeholder="Tu nombre completo" required>
+                            </div>
+                            <div class="invalid-feedback">Por favor ingresa tu nombre completo</div>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="email" class="mb-1">Correo institucional</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" id="email" class="form-control" placeholder="tu.correo@cesun.edu.mx" required>
+                            </div>
+                            <div class="invalid-feedback">Por favor ingresa un correo institucional válido</div>
+                            <small class="form-text text-muted mt-1">
+                                <i class="fas fa-info-circle me-1"></i> Solo se aceptan correos @cesun.edu.mx o @cesunbcdu.mx
+                            </small>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label for="servicio" class="mb-1">Servicio</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                <select id="servicio" class="form-control" required>
+                                    <option value="">-- Selecciona un servicio --</option>
+                                </select>
+                            </div>
+                            <div class="invalid-feedback">Por favor selecciona un servicio</div>
+                        </div>
+                        
+                        <button type="submit" class="btn-login">
+                            <i class="fas fa-ticket-alt me-2"></i>Generar Turno
+                        </button>
+                        
+                        <!-- Botón de prueba para verificar sincronización -->
+                        <button type="button" class="btn btn-outline-secondary mt-2" onclick="probarSincronizacion()">
+                            <i class="fas fa-sync me-2"></i>Probar Sincronización
+                        </button>
+                    </form>
+                    
+                    <div id="turnoGenerado" class="d-none mt-4">
+                        <div class="white-card">
+                            <div class="turno-number-display">
+                                <h2 class="turno-number">001</h2>
+                                <p class="turno-label">Su número de turno</p>
+                            </div>
+                            <div class="turno-info mb-3">
+                                <p><i class="fas fa-user me-2"></i><span id="turnoNombre"></span></p>
+                                <p><i class="fas fa-envelope me-2"></i><span id="turnoEmail"></span></p>
+                                <p><i class="fas fa-list me-2"></i><span id="turnoServicio"></span></p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button onclick="cancelarTurno()" class="btn-cancelar">
+                                    <i class="fas fa-times me-2"></i>Cancelar Turno
+                                </button>
+                                <button onclick="nuevoTurno()" class="btn-login-outline">
+                                    <i class="fas fa-redo me-2"></i>Solicitar Otro
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Consultar Turno Activo -->
+    <div class="modal fade" id="modalConsultarTurno" tabindex="-1" aria-labelledby="modalConsultarTurnoLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalConsultarTurnoLabel">Consultar Turno Activo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formConsultarTurno" autocomplete="on" onsubmit="consultarTurnoPorCorreo(); return false;">
+              <div class="mb-3">
+                <label for="consultarCorreo" class="form-label">Correo institucional</label>
+                <input type="email" class="form-control" id="consultarCorreo" placeholder="tu.correo@cesun.edu.mx" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Buscar Turno</button>
+            </form>
+            <div id="resultadoConsultaTurno" class="mt-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="cesun-footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">
+                        <i class="fas fa-university me-2"></i>
+                        CESUN Universidad - Sistema de Gestión de Turnos
+                    </p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p class="mb-0">
+                        <i class="fas fa-calendar me-2"></i>
+                        © 2025 Todos los derechos reservados
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/fondo.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/index.js"></script>
+    <script>
+        // Listener para eventos globales entre pestañas (refuerzo para index)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'eventoGlobal') {
+                const evento = JSON.parse(e.newValue);
+                if (evento.tipo === 'dataChanged') {
+                    if (typeof cargarTurnosEnEspera === 'function') cargarTurnosEnEspera();
+                    if (typeof actualizarTurnoActual === 'function') actualizarTurnoActual();
+                    if (typeof actualizarDashboard === 'function') actualizarDashboard();
+                }
+                if (evento.tipo === 'turnoLlamado') {
+                    if (typeof eventSystem !== 'undefined') {
+                        eventSystem.emit('turnoLlamado', evento.data);
+                    }
+                }
+                if (evento.tipo === 'fondoCambiado') {
+                    console.log('Evento de cambio de fondo recibido en index');
+                    // El fondo se aplicará automáticamente a través de fondo.js
+                }
+            }
+        });
+        
+        // Globalizar funciones para htmx y storage
+        window.cargarTurnosEnEspera = cargarTurnosEnEspera;
+        window.actualizarTurnoActual = actualizarTurnoActual;
+        window.actualizarDashboard = actualizarDashboard;
+    </script>
+</body>
+</html>

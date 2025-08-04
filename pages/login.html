@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso Administrador | CESUN Universidad</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- CSS personalizado -->
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/login.css">
+  <style>
+    body { background: none !important; }
+  </style>
+</head>
+<body>
+  <div class="bg-fondo-cesun"></div>
+  
+  <!-- Header -->
+  <header class="cesun-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <div class="d-flex align-items-center">
+            <img src="../images/logo.png" alt="CESUN Universidad" class="cesun-logo me-3">
+            <div>
+              <h1 class="h4 mb-0">Sistema de Gestión de Turnos</h1>
+              <small class="opacity-75">CESUN Universidad</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="login-main-container">
+    <div class="container">
+      <div class="form-container">
+        <div class="login-container">
+          <h2>Acceso Administrador</h2>
+          <form id="loginForm" autocomplete="on">
+            <div class="form-group">
+              <label for="correo" class="mb-1">Correo institucional</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                <input type="email" id="correo" name="correo" class="form-control" placeholder="admin@cesun.edu.mx" required autocomplete="username">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="contrasena" class="mb-1">Contraseña</label>
+              <div class="password-input-group">
+                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                <input type="password" id="contrasena" name="contrasena" class="form-control" placeholder="Contraseña" required autocomplete="current-password">
+                <button type="button" class="show-password-btn" onclick="togglePassword()" aria-label="Mostrar/Ocultar contraseña">
+                  <i id="toggleIcon" class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+                        <button type="button" class="btn-login" onclick="iniciarSesion()">
+              <i class="fas fa-sign-in-alt me-2"></i>Iniciar sesión
+            </button>
+            <div id="loginError" class="login-error"></div>
+                        <button type="button" onclick="verificarEstadoBD()" class="btn btn-sm btn-outline-secondary mt-2">
+                            <i class="fas fa-bug me-1"></i>Verificar BD
+                        </button>
+                        <button type="button" onclick="limpiarYRecrearAdmin()" class="btn btn-sm btn-outline-warning mt-2 ms-2">
+                            <i class="fas fa-refresh me-1"></i>Recrear Admin
+                        </button>
+                        <button type="button" onclick="verificarYCrearUsuarioGlobal()" class="btn btn-sm btn-outline-info mt-2 ms-2">
+                            <i class="fas fa-user-shield me-1"></i>Verificar Usuario Global
+                        </button>
+          </form>
+      </div>
+    </div>
+    <!-- Modal de cambio de contraseña -->
+    <div class="modal fade" id="modalCambioContrasena" tabindex="-1" aria-labelledby="modalCambioContrasenaLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalCambioContrasenaLabel">Cambio de contraseña</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formCambioContrasena">
+              <div class="mb-3">
+                <label for="nuevaContrasena" class="form-label">Nueva contraseña</label>
+                <input type="password" class="form-control" id="nuevaContrasena" required minlength="8" autocomplete="new-password">
+              </div>
+              <div class="mb-3">
+                <label for="confirmarContrasena" class="form-label">Confirmar contraseña</label>
+                <input type="password" class="form-control" id="confirmarContrasena" required minlength="8" autocomplete="new-password">
+              </div>
+              <div id="errorCambioContrasena" class="text-danger mb-2"></div>
+              <button type="submit" class="btn btn-primary w-100">Guardar nueva contraseña</button>
+            </form>
+                        </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="cesun-footer">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <p class="mb-0">
+            <i class="fas fa-university me-2"></i>
+            CESUN Universidad - Sistema de Gestión de Turnos
+          </p>
+        </div>
+        <div class="col-md-6 text-end">
+          <p class="mb-0">
+            <i class="fas fa-calendar me-2"></i>
+            © 2025 Todos los derechos reservados
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/auth.js"></script>
+  <script src="../js/db.js"></script>
+    <script src="../js/fondo.js"></script>
+  <script>
+    function togglePassword() {
+      const input = document.getElementById('contrasena');
+      const icon = document.getElementById('toggleIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+
+        // Función para iniciar sesión
+        function iniciarSesion() {
+            const correo = document.getElementById('correo').value.trim();
+            const contrasena = document.getElementById('contrasena').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            // Limpiar errores anteriores
+            errorDiv.textContent = '';
+            errorDiv.style.display = 'none';
+            
+            if (!correo || !contrasena) {
+                mostrarErrorLogin('Por favor complete todos los campos');
+                return;
+            }
+            
+            try {
+                const usuario = auth.login(correo, contrasena);
+                
+                console.log('Login exitoso:', usuario);
+                console.log('¿Es admin?', auth.isAdmin());
+                console.log('Correo del usuario:', usuario.correo);
+                console.log('¿Es usuario global?', usuario.correo === 'soportetecnico@cesun.edu.mx');
+                console.log('Permisos del usuario:', usuario.permisos);
+                
+                // Mostrar mensaje de éxito
+                mostrarExitoLogin(`Bienvenido, ${usuario.nombre}!`);
+                
+                // Redirigir según permisos
+                setTimeout(() => {
+                    console.log('Intentando redirección...');
+                    console.log('¿Es admin?', auth.isAdmin());
+                    
+                    // Redirigir según tipo de usuario
+                    if (auth.isAdmin()) {
+                        console.log('Redirigiendo a configuracion.html (Administrador)');
+                        window.location.href = 'configuracion.html';
+                    } else {
+                        console.log('Redirigiendo a admin.html (Usuario Normal)');
+                        window.location.href = 'admin.html';
+                    }
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Error en login:', error);
+                mostrarErrorLogin(error.message);
+            }
+        }
+        
+        function mostrarErrorLogin(mensaje) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = mensaje;
+            errorDiv.style.display = 'block';
+        }
+        
+        function mostrarExitoLogin(mensaje) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = mensaje;
+            errorDiv.style.display = 'block';
+            errorDiv.className = 'login-error success';
+        }
+
+        // Función temporal para verificar el estado de la base de datos
+        function verificarEstadoBD() {
+            console.log('=== VERIFICACIÓN DE BASE DE DATOS ===');
+            console.log('Usuarios en BD:', db.getUsuarios());
+            console.log('Usuario actual:', auth.getCurrentUser());
+            console.log('¿Está autenticado?', auth.isAuthenticated());
+            console.log('¿Es admin?', auth.isAdmin());
+            
+            const usuario = db.getUsuarios().find(u => u.email === 'soportetecnico@cesun.edu.mx');
+            console.log('Usuario Luis Mejia:', usuario);
+            if (usuario) {
+                console.log('Permisos de Luis Mejia:', usuario.permisos);
+                console.log('¿Está bloqueado?', usuario.bloqueado);
+                console.log('¿Es usuario global?', usuario.email === 'soportetecnico@cesun.edu.mx');
+            }
+            
+            // Verificar redirección según tipo de usuario
+            const usuarioActual = auth.getCurrentUser();
+            if (usuarioActual) {
+                console.log('=== REDIRECCIÓN ESPERADA ===');
+                if (auth.isAdmin()) {
+                    console.log('→ Iría a: configuracion.html (Administrador)');
+                } else {
+                    console.log('→ Iría a: admin.html (Usuario Normal)');
+                }
+            }
+        }
+
+        // Función temporal para limpiar y recrear el usuario admin
+        function limpiarYRecrearAdmin() {
+            console.log('Limpiando localStorage...');
+            localStorage.removeItem('turnoDB');
+            console.log('Reiniciando página...');
+            window.location.reload();
+        }
+
+        // Función para verificar y crear el usuario global si no existe
+        function verificarYCrearUsuarioGlobal() {
+            console.log('=== VERIFICANDO USUARIO GLOBAL ===');
+            const usuarios = db.getUsuarios();
+            console.log('Usuarios existentes:', usuarios);
+            
+            const usuarioGlobal = usuarios.find(u => u.correo === 'soportetecnico@cesun.edu.mx');
+            if (!usuarioGlobal) {
+                console.log('Usuario global no existe, creándolo...');
+                try {
+                    db.agregarUsuario('Luis Mejia', 'soportetecnico@cesun.edu.mx', 'C3sun2025*', 'admin');
+                    console.log('Usuario global creado exitosamente');
+                    alert('Usuario global creado. Intenta hacer login nuevamente.');
+                } catch (error) {
+                    console.error('Error al crear usuario global:', error);
+                    alert('Error al crear usuario global: ' + error.message);
+                }
+            } else {
+                console.log('Usuario global existe:', usuarioGlobal);
+                console.log('Permisos:', usuarioGlobal.permisos);
+                console.log('¿Está bloqueado?', usuarioGlobal.bloqueado);
+            }
+        }
+
+        // Hacer las funciones disponibles globalmente
+        window.verificarEstadoBD = verificarEstadoBD;
+        window.limpiarYRecrearAdmin = limpiarYRecrearAdmin;
+        window.verificarYCrearUsuarioGlobal = verificarYCrearUsuarioGlobal;
+        window.iniciarSesion = iniciarSesion;
+
+        // Agregar event listeners para presionar Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            const correoInput = document.getElementById('correo');
+            const contrasenaInput = document.getElementById('contrasena');
+            
+            function handleEnterKey(e) {
+                if (e.key === 'Enter') {
+                    iniciarSesion();
+                }
+            }
+            
+            correoInput.addEventListener('keypress', handleEnterKey);
+            contrasenaInput.addEventListener('keypress', handleEnterKey);
+        });
+  </script>
+</body>
+</html>
